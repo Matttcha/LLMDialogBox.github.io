@@ -1,0 +1,10 @@
+// 使用babel把代码编译成es5版本
+
+{
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react",
+      "@babel/preset-typescript"
+    ]
+  }
+  
