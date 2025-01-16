@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Matttcha/LLMDialogBox.git"
+    "url": "ghttps://github.com/Matttcha/LLMDialogBox.github.io"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Matttcha/LLMDialogBox/issues"
+    "url": "https://github.com/Matttcha/LLMDialogBox.github.io/issues"
   },
-  "homepage": "https://github.com/Matttcha/LLMDialogBox#readme",
+  "homepage": "https://github.com/Matttcha/LLMDialogBox.github.io#readme",
   "devDependencies": {
     "@babel/cli": "^7.26.4",
     "@babel/core": "^7.26.0",
