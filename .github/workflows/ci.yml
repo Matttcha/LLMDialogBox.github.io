@@ -1,0 +1,22 @@
+name: ci 🔔
+on:
+    push:
+        branches: 
+        - main
+        paths:
+        - src/*
+jobs:
+    job1:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout 拉取代码
+          uses: actions/checkout@v3
+        
+        - name: 安装node
+          uses: actions/setup-node@v3
+        
+        - name: Install dependencies 下载依赖
+          run: npm install
+
+        - name: Build project 构建项目
+          run: npm run docs:build
