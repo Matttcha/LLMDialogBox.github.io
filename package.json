@@ -45,8 +45,8 @@
   },
   "dependencies": {
     "@arco-design/web-react": "^2.65.0",
-    "@coze/api": "^1.0.17",
     "babel-loader": "^9.2.1",
-    "classnames": "^2.5.1"
+    "classnames": "^2.5.1",
+    "zustand": "^5.0.3"
   }
 }

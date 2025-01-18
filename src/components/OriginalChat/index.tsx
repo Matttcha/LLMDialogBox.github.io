@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./index.less";
-import getStyleName from "../../common/utils/getStyleName";
+import getStyleName from "../../utils/getStyleName";
+import { useChatStore } from "../../store";
 
 const style = getStyleName("original-chat");
 
@@ -33,13 +34,20 @@ interface IProps {}
  * @param props
  */
 const OriginalChat = (props: IProps) => {
+  const store = useChatStore();
+
+  const onClickExample = () => {};
+
   return (
     <div className={style("")}>
-      <div className={style("title")}>你好，我是邪恶布偶猫</div>
-      <div className={style("des")}>
-        作为你的智能伙伴，我能帮你分析文件、图片、写代码，又能陪你聊天、答疑解惑。
+      <div className={style("title")}>
+        你好，我是{store.botInfo.name || "你的智能助手"}
       </div>
-      <div className={style("examples")}>
+      <div className={style("des")}>
+        {store.botInfo.description ||
+          "作为你的智能伙伴，我能帮你分析文件、图片、写代码，又能陪你聊天、答疑解惑。"}
+      </div>
+      <div className={style("examples")} onClick={onClickExample}>
         {data.map((item) => (
           <div className={style("examples-example")}>
             <div className={style("examples-example-title")}>{item.title}</div>

@@ -1,23 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState } from "react";
 import "./index.less";
-import getStyleName from "../../common/utils/getStyleName";
+import getStyleName from "../../utils/getStyleName";
 import OriginalChat from "../OriginalChat";
 import ChatRecordBox from "../ChatRecordBox";
 import ChatInput from "../ChatInput";
+import { IconDoubleLeft, IconSettings } from "@arco-design/web-react/icon";
+import { useChatStore } from "../../store";
+import { IMessageInter } from "../../type";
 
 const style = getStyleName("independent-dialog-box");
-
-const conversations = [
-  {
-    text: "你好",
-  },
-  {
-    text: "介绍人工智能",
-  },
-  {
-    text: "什么是布偶猫",
-  },
-];
 
 interface IProps {}
 
@@ -26,6 +17,12 @@ interface IProps {}
  * @param props
  */
 const IndependentDialogBox = (props: IProps) => {
+  const [isNewConversation, setIsNewConversation] = useState<Boolean>(true);
+  const [currentConversation, setCurrentConversation] = useState<
+    IMessageInter[]
+  >([]);
+  const store = useChatStore();
+
   return (
     <div className={style("")}>
       <div className={style("left")}>
@@ -33,17 +30,44 @@ const IndependentDialogBox = (props: IProps) => {
           <div className={style("left-title-icon")}>🐈</div>
           <div className={style("left-title-erc")}>邪恶布偶猫</div>
         </div>
-        <div className={style("left-add-conversation")}>+ 新对话</div>
+        <div
+          className={style("left-add-conversation")}
+          onClick={() => {
+            setIsNewConversation(true);
+          }}
+        >
+          + 新对话
+        </div>
         <div className={style("left-history")}>历史对话</div>
         <div className={style("left-list")}>
-          {conversations.map((item) => (
-            <div className={style("left-list-item")}>{item.text}</div>
+          {store.conversations.map((item) => (
+            <div
+              className={style("left-list-item")}
+              onClick={() => {
+                setIsNewConversation(false);
+                setCurrentConversation(item);
+              }}
+            >
+              {item[0].text}
+            </div>
           ))}
+        </div>
+        <div className={style("left-settings")}>
+          <div className={style("left-settings-setting-icon")}>
+            <IconSettings />
+          </div>
+          <div className={style("left-settings-setting-text")}>设置</div>
+          <div className={style("left-settings-icon")}>
+            <IconDoubleLeft />
+          </div>
         </div>
       </div>
       <div className={style("right")}>
-        {/* <ChatRecordBox /> */}
-        <OriginalChat />
+        {isNewConversation ? (
+          <OriginalChat />
+        ) : (
+          <ChatRecordBox conversation={currentConversation} />
+        )}
         <ChatInput />
       </div>
     </div>

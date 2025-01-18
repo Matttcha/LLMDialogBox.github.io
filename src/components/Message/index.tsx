@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./index.less";
-import getStyleName from "../../common/utils/getStyleName";
+import getStyleName from "../../utils/getStyleName";
+import { useChatStore } from "../../store";
+import { IMessageInter } from "../../type";
 
 const style = getStyleName("message");
 
 interface IProps {
-  type: string; // user用户；assitent智能助手
-  imgs?: [];
-  files?: [];
+  message: IMessageInter;
 }
 
 const suggestions = [
@@ -20,26 +20,30 @@ const suggestions = [
  * @param props
  */
 const Message = (props: IProps) => {
-  const { type, imgs, files } = props;
+  const { message } = props;
+  const { role, text, suggestions = [], files, images } = message;
+  const store = useChatStore();
   return (
     <div className={style("")}>
       {/* 头像 */}
       <div
         className={`${style("avatar")} ${
-          type === "assistant" ? style("avatar-assistant") : ""
+          role === "assistant" ? style("avatar-assistant") : ""
         }`}
-      ></div>
+      >
+        {role === "assistant" && <img src={store.botInfo.icon_url}></img>}
+      </div>
       {/* 消息内容 */}
       <div>
         <div
           className={`${style("content")} ${
-            type === "assistant" ? style("content-assistant") : ""
+            role === "assistant" ? style("content-assistant") : ""
           }`}
         >
           {/* 如果有图片，展示图片 */}
-          {imgs && imgs.length && (
+          {images && images.length && (
             <div className={style("content-imgs")}>
-              {imgs?.map((img) => (
+              {images?.map((img) => (
                 <div className={style("content-imgs-img")}>图片</div>
               ))}
             </div>
@@ -52,9 +56,9 @@ const Message = (props: IProps) => {
               ))}
             </div>
           )}
-          <div className={style("content-text")}>你好你好你好</div>
+          <div className={style("content-text")}>{text}</div>
         </div>
-        {type === "assistant" && (
+        {role === "assistant" && suggestions.length !== 0 && (
           <div className={style("suggestions")}>
             <div className={style("suggestions-title")}>你可以继续问我：</div>
             {suggestions.map((suggestion) => (

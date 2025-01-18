@@ -1,6 +1,6 @@
 import React from "react";
 import "./index.less";
-import getStyleName from "../../common/utils/getStyleName";
+import getStyleName from "../../utils/getStyleName";
 import { IconFile, IconFileImage, IconSend } from "@arco-design/web-react/icon";
 import { Tooltip, Input } from "@arco-design/web-react";
 const TextArea = Input.TextArea;

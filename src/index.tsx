@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import IndependentDialogBox from "./components/IndependentDialogBox";
 import InlineDialogBox from "./components/InlineDialogBox";
+import { useChatStore } from "./store";
+import { getBotInfo } from "./request/api";
+import { botInfo } from "./mock";
+
+const botId = "";
 
 /**
  * 对话框形态
@@ -23,6 +28,21 @@ interface IProps {
  */
 const LLMDialogBox = (props: IProps) => {
   const { mode } = props;
+  const store = useChatStore();
+  // 每次组件挂载时，调用该函数，获取智能助手的名字
+  useEffect(() => {
+    const fetchBotInfo = async () => {
+      try {
+        // const data = await getBotInfo(); // 暂时不用，先用mock数据，因为调用会超api调用限额
+        const data = await botInfo;
+        store.setBotInfo(data);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    fetchBotInfo();
+  }, [botId]); // botId后续要改，这里只是暂时写一下
+
   return (
     <>
       {mode === DialogBoxMode.inline ? (
