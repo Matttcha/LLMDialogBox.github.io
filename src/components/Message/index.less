@@ -1,0 +1,60 @@
+.erc-message {
+  display: flex;
+  margin-bottom: 15px;
+  &-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 5px;
+    background-color: rgba(73, 85, 245, 0.07);
+    margin-right: 10px;
+  }
+  &-avatar-assistant {
+    background-color: rgba(73, 85, 245, 0.27);
+  }
+  &-content {
+    width: 500px;
+    border-radius: 10px;
+    padding: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    &-imgs {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      &-img {
+        width: 100px;
+        height: 50px;
+        background-color: pink;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+    }
+    &-files {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      &-file {
+        width: 100px;
+        height: 50px;
+        background-color: green;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+    }
+  }
+  &-content-assistant {
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+  }
+  &-suggestions {
+    margin-top: 10px;
+    font-size: 14px;
+    &-title {
+      color: gray;
+    }
+    &-suggestion {
+      color: blue;
+    }
+  }
+}

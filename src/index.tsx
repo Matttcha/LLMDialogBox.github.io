@@ -25,7 +25,11 @@ const LLMDialogBox = (props: IProps) => {
   const { mode } = props;
   return (
     <>
-      {mode === DialogBoxMode.inline ? <InlineDialogBox /> : <IndependentDialogBox />}
+      {mode === DialogBoxMode.inline ? (
+        <InlineDialogBox />
+      ) : (
+        <IndependentDialogBox />
+      )}
     </>
   );
 };

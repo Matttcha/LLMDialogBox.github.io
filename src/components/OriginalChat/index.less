@@ -1,0 +1,52 @@
+.erc-original-chat {
+  width: 540px; //
+  height: 500px; // 需要修改
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  &-title {
+    font-size: 36px;
+    margin-bottom: 10px;
+    color: #05073b;
+    font-weight: 600;
+  }
+  &-des {
+    margin-bottom: 20px;
+    color: #676c90;
+    font-size: 13px;
+  }
+  &-examples {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    &-example {
+      width: 250px;
+      height: 100px;
+      background-color: #fff;
+      border-radius: 20px;
+      margin: 0 10px 10px 0;
+      padding: 15px;
+      box-sizing: border-box;
+      &-title {
+        color: #05073b;
+        font-size: 15px;
+        font-weight: bold;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-bottom: 5px;
+      }
+      &-text {
+        color: #676c90;
+        font-size: 13px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+    &-example:hover {
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+  }
+}

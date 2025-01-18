@@ -1,0 +1,17 @@
+.erc-chat-record-box {
+  box-sizing: border-box;
+  height: 500px; // 需要修改
+  overflow-y: auto;
+}
+
+/* 隐藏滚动条：兼容 Firefox 浏览器 */
+.erc-chat-record-box {
+  overflow: auto; /* 允许内容滚动，但默认会显示滚动条 */
+  -ms-overflow-style: none; /* IE 和 Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* 隐藏滚动条：适用于 WebKit 浏览器，如 Chrome 和 Safari */
+.erc-chat-record-box::-webkit-scrollbar {
+  display: none;
+}
