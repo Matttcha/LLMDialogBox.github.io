@@ -24,42 +24,52 @@ interface IProps {
 const Message = (props: IProps) => {
   const { message, showSuggestions = false } = props;
   const { role, text, suggestions = [], files, images } = message;
+  const [loading, setLoading] = useState<boolean>(false);
   const store = useChatStore();
+  useEffect(() => {
+    console.log('store2', store);
+    if (store.messages.length > 1 && !store.messages[1].text) setLoading(true);
+    else setLoading(false);
+  }, [store])
   return (
     <div className={style("")}>
       {/* 头像 */}
       <div
-        className={`${style("avatar")} ${
-          role === "assistant" ? style("avatar-assistant") : ""
-        }`}
-        // onClick={async () => {
-        //   await getChat("介绍银渐层", "text");
-        // }}
+        className={`${style("avatar")} ${role === "assistant" ? style("avatar-assistant") : ""
+          }`}
+      // onClick={async () => {
+      //   await getChat("介绍银渐层", "text");
+      // }}
       >
         {role === "assistant" && <img src={store.botInfo.icon_url}></img>}
       </div>
+      {/* 骨架屏 */}
+      {
+        loading && role === 'assistant' && <div>
+          loading...
+        </div>
+      }
       {/* 消息内容 */}
       <div>
         <div
-          className={`${style("content")} ${
-            role === "assistant" ? style("content-assistant") : ""
-          }`}
-          // onClick={async () => {
-          //   console.log(await getMessageList(), "data");
-          // }}
-          // onClick={() => {
-          //   const current = store.currentConversation;
-          //   const conversations = store.conversations;
-          //   const conversation = Object.entries(conversations).filter(
-          //     (item) => item[0] === current
-          //   )[0][1];
-          //   conversation.push({
-          //     role: "user",
-          //     text: "新增",
-          //   });
-          //   conversations[current] = conversation;
-          //   store.setConversations(conversations);
-          // }}
+          className={`${style("content")} ${role === "assistant" ? style("content-assistant") : ""
+            }`}
+        // onClick={async () => {
+        //   console.log(await getMessageList(), "data");
+        // }}
+        // onClick={() => {
+        //   const current = store.currentConversation;
+        //   const conversations = store.conversations;
+        //   const conversation = Object.entries(conversations).filter(
+        //     (item) => item[0] === current
+        //   )[0][1];
+        //   conversation.push({
+        //     role: "user",
+        //     text: "新增",
+        //   });
+        //   conversations[current] = conversation;
+        //   store.setConversations(conversations);
+        // }}
         >
           {/* 如果有图片，展示图片 */}
           {images && images.length && (

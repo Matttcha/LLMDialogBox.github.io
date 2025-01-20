@@ -1,7 +1,7 @@
 export const baseUrl = "https://api.coze.cn/"; // 国内地址
 
-const myToken = ""; //测试的时候填一下
-const myBotId = ""; //测试的时候填一下
+const myToken = "pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM"; //测试的时候填一下
+const myBotId = "7460125530122190900"; //测试的时候填一下
 const user = "evilragdollcat";
 
 /**
