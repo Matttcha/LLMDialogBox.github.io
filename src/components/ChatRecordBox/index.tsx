@@ -22,6 +22,8 @@ const ChatRecordBox = (props: IProps) => {
     // 查询历史消息列表并用setMessages更新messages
     const res = []; // 假如说这是接口返回的messages，因为接口还没写所以先用空数组mock一下
     store.setMessages(res);
+    console.log(store.messages);
+    
   }, [store.currentConversation]);
 
   return (
