@@ -2,25 +2,27 @@ import React, { useEffect, useRef, useState } from "react";
 import "./index.less";
 import getStyleName from "../../utils/getStyleName";
 import { useChatStore } from "../../store";
-import { IMessageInter } from "../../type";
+import { IMessage } from "../../type";
+import { getChat, getMessageList } from "../../request/api";
 
 const style = getStyleName("message");
 
 interface IProps {
-  message: IMessageInter;
+  message: IMessage;
+  showSuggestions?: boolean;
 }
 
-const suggestions = [
-  "Python语言适用于哪些领域？",
-  "分享一些用Python语言实现的案例",
-];
+// const suggestions = [
+//   "Python语言适用于哪些领域？",
+//   "分享一些用Python语言实现的案例",
+// ];
 
 /**
  * 对话消息组件：分为【用户提问】和【智能助手答复】
  * @param props
  */
 const Message = (props: IProps) => {
-  const { message } = props;
+  const { message, showSuggestions = false } = props;
   const { role, text, suggestions = [], files, images } = message;
   const store = useChatStore();
   return (
@@ -30,6 +32,9 @@ const Message = (props: IProps) => {
         className={`${style("avatar")} ${
           role === "assistant" ? style("avatar-assistant") : ""
         }`}
+        // onClick={async () => {
+        //   await getChat("介绍银渐层", "text");
+        // }}
       >
         {role === "assistant" && <img src={store.botInfo.icon_url}></img>}
       </div>
@@ -39,6 +44,22 @@ const Message = (props: IProps) => {
           className={`${style("content")} ${
             role === "assistant" ? style("content-assistant") : ""
           }`}
+          // onClick={async () => {
+          //   console.log(await getMessageList(), "data");
+          // }}
+          // onClick={() => {
+          //   const current = store.currentConversation;
+          //   const conversations = store.conversations;
+          //   const conversation = Object.entries(conversations).filter(
+          //     (item) => item[0] === current
+          //   )[0][1];
+          //   conversation.push({
+          //     role: "user",
+          //     text: "新增",
+          //   });
+          //   conversations[current] = conversation;
+          //   store.setConversations(conversations);
+          // }}
         >
           {/* 如果有图片，展示图片 */}
           {images && images.length && (
@@ -48,7 +69,7 @@ const Message = (props: IProps) => {
               ))}
             </div>
           )}
-          {/* 如果有文件/附件，展示附近 */}
+          {/* 如果有文件/附件，展示附件 */}
           {files && files.length && (
             <div className={style("content-files")}>
               {files?.map((file) => (
@@ -58,14 +79,11 @@ const Message = (props: IProps) => {
           )}
           <div className={style("content-text")}>{text}</div>
         </div>
-        {role === "assistant" && suggestions.length !== 0 && (
+        {showSuggestions && (
           <div className={style("suggestions")}>
             <div className={style("suggestions-title")}>你可以继续问我：</div>
             {suggestions.map((suggestion) => (
-              <div
-                className={style("suggestions-suggestion")}
-                onClick={() => {}}
-              >
+              <div className={style("suggestions-suggestion")}>
                 {suggestion}
               </div>
             ))}

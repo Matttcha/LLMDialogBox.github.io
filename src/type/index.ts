@@ -4,7 +4,20 @@ export interface IBotInfo {
   icon_url?: string;
 }
 
+export interface IInput {
+  text: string;
+  fileList?: [];
+  imageList?: [];
+}
+
 export type object_string_type = "text" | "file" | "image";
+
+export interface IContent {
+  type: object_string_type;
+  text?: string;
+  file_id?: string;
+  file_url?: string;
+}
 
 /**
  * 消息内容的类型，取值包括：
@@ -62,7 +75,7 @@ export interface FileInfoInter {
  * 对话类型
  *
  */
-export interface IMessageInter {
+export interface IMessage {
   role: role;
   text: string;
   suggestions?: string[];

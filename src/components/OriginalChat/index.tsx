@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./index.less";
 import getStyleName from "../../utils/getStyleName";
 import { useChatStore } from "../../store";
+import useConversation from "../../hooks/useConversation";
 
 const style = getStyleName("original-chat");
 
@@ -35,8 +36,7 @@ interface IProps {}
  */
 const OriginalChat = (props: IProps) => {
   const store = useChatStore();
-
-  const onClickExample = () => {};
+  const { handleSend } = useConversation();
 
   return (
     <div className={style("")}>
@@ -47,9 +47,14 @@ const OriginalChat = (props: IProps) => {
         {store.botInfo.description ||
           "作为你的智能伙伴，我能帮你分析文件、图片、写代码，又能陪你聊天、答疑解惑。"}
       </div>
-      <div className={style("examples")} onClick={onClickExample}>
+      <div className={style("examples")}>
         {data.map((item) => (
-          <div className={style("examples-example")}>
+          <div
+            className={style("examples-example")}
+            onClick={() => {
+              // handleSend();
+            }}
+          >
             <div className={style("examples-example-title")}>{item.title}</div>
             <div className={style("examples-example-text")}>{item.text}</div>
             {item.file && (

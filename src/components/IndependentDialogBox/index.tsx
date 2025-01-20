@@ -6,7 +6,10 @@ import ChatRecordBox from "../ChatRecordBox";
 import ChatInput from "../ChatInput";
 import { IconDoubleLeft, IconSettings } from "@arco-design/web-react/icon";
 import { useChatStore } from "../../store";
-import { IMessageInter } from "../../type";
+import { IMessage } from "../../type";
+import { getChat } from "../../request/api";
+import Item from "@arco-design/web-react/es/Breadcrumb/item";
+// import { parseSSEResponse } from "../../utils/chat";
 
 const style = getStyleName("independent-dialog-box");
 
@@ -17,12 +20,7 @@ interface IProps {}
  * @param props
  */
 const IndependentDialogBox = (props: IProps) => {
-  const [isNewConversation, setIsNewConversation] = useState<Boolean>(true);
-  const [currentConversation, setCurrentConversation] = useState<
-    IMessageInter[]
-  >([]);
   const store = useChatStore();
-
   return (
     <div className={style("")}>
       <div className={style("left")}>
@@ -33,24 +31,42 @@ const IndependentDialogBox = (props: IProps) => {
         <div
           className={style("left-add-conversation")}
           onClick={() => {
-            setIsNewConversation(true);
+            if (store.currentConversation) {
+              store.setCurrentConversation("");
+            }
           }}
         >
-          + 新对话
+          + 新会话
         </div>
-        <div className={style("left-history")}>历史对话</div>
+        <div className={style("left-history")}>历史会话</div>
         <div className={style("left-list")}>
           {store.conversations.map((item) => (
+            <div
+              className={`${style("left-list-item")} ${
+                item.conversationId === store.currentConversation
+                  ? style("left-list-item-active")
+                  : ""
+              }`}
+              onClick={() => {
+                if (store.currentConversation !== item.conversationId) {
+                  store.setCurrentConversation(item.conversationId);
+                }
+              }}
+            >
+              {item.text}
+            </div>
+          ))}
+          {/* {Object.entries(store.conversations).map((item) => (
             <div
               className={style("left-list-item")}
               onClick={() => {
                 setIsNewConversation(false);
-                setCurrentConversation(item);
+                store.setCurrentConversation(item[0]);
               }}
             >
-              {item[0].text}
+              {item[1][0].text}
             </div>
-          ))}
+          ))} */}
         </div>
         <div className={style("left-settings")}>
           <div className={style("left-settings-setting-icon")}>
@@ -63,11 +79,7 @@ const IndependentDialogBox = (props: IProps) => {
         </div>
       </div>
       <div className={style("right")}>
-        {isNewConversation ? (
-          <OriginalChat />
-        ) : (
-          <ChatRecordBox conversation={currentConversation} />
-        )}
+        {!store.currentConversation ? <OriginalChat /> : <ChatRecordBox />}
         <ChatInput />
       </div>
     </div>

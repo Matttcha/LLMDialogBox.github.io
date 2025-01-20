@@ -3,6 +3,9 @@ import "./index.less";
 import getStyleName from "../../utils/getStyleName";
 import { IconFile, IconFileImage, IconSend } from "@arco-design/web-react/icon";
 import { Tooltip, Input } from "@arco-design/web-react";
+import { useChatStore } from "../../store";
+import useConversation from "../../hooks/useConversation";
+
 const TextArea = Input.TextArea;
 
 const style = getStyleName("chat-input");
@@ -14,6 +17,9 @@ interface IProps {}
  * @param props
  */
 const ChatInput = (props: IProps) => {
+  const store = useChatStore();
+  const { sendMessage } = useConversation();
+
   return (
     <div className={style("")}>
       <div className={style("textarea")}>
@@ -31,7 +37,12 @@ const ChatInput = (props: IProps) => {
         <div className={style("btns-btn")}>
           <IconFileImage />
         </div>
-        <div className={`${style("btns-btn")} ${style("btns-send")}`}>
+        <div
+          className={`${style("btns-btn")} ${style("btns-send")}`}
+          onClick={async () => {
+            await sendMessage({ text: "介绍一下布偶猫吧" });
+          }}
+        >
           <IconSend className={style("btns-btn-send")} />
         </div>
       </div>
