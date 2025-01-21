@@ -6,6 +6,7 @@ import ChatRecordBox from "../ChatRecordBox";
 import ChatInput from "../ChatInput";
 import { IconDoubleLeft, IconSettings } from "@arco-design/web-react/icon";
 import { useChatStore } from "../../store";
+import { Modal } from "antd";
 
 const style = getStyleName("independent-dialog-box");
 
@@ -17,6 +18,7 @@ interface IProps {}
  */
 const IndependentDialogBox = (props: IProps) => {
   const store = useChatStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <div className={style("")}>
       <div className={style("left")}>
@@ -60,7 +62,14 @@ const IndependentDialogBox = (props: IProps) => {
           <div className={style("left-settings-setting-icon")}>
             <IconSettings />
           </div>
-          <div className={style("left-settings-setting-text")}>设置</div>
+          <div
+            className={style("left-settings-setting-text")}
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
+            设置
+          </div>
           <div className={style("left-settings-icon")}>
             <IconDoubleLeft />
           </div>
@@ -70,6 +79,16 @@ const IndependentDialogBox = (props: IProps) => {
         {!store.currentConversation ? <OriginalChat /> : <ChatRecordBox />}
         <ChatInput />
       </div>
+      <Modal
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false);
+        }}
+      >
+        <div></div>
+        <div>456</div>
+        <div>789</div>
+      </Modal>
     </div>
   );
 };
