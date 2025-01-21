@@ -24,9 +24,9 @@
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.26.0",
-    "babel-loader": "^9.2.1",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
+    "babel-loader": "^9.2.1",
     "css-loader": "^7.1.2",
     "less-loader": "^12.2.0",
     "mini-css-extract-plugin": "^2.9.2",
@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@arco-design/web-react": "^2.65.0",
+    "antd": "^5.23.2",
     "classnames": "^2.5.1",
     "eventsource-parser": "^3.0.0",
     "zustand": "^5.0.3"

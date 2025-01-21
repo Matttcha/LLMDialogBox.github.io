@@ -8,6 +8,7 @@ function useConversation() {
   const store = useChatStore();
 
   const sendMessage = async (input: IInput) => {
+    // 在接口数据返回前插入两条正在处理中的问答
     store.setMessages([
       ...store.messages,
       {
@@ -19,8 +20,10 @@ function useConversation() {
         text: "",
       },
     ]);
-    console.log(store.messages);
-    await handleSend(input);
+    // 发送消息不需要重新请求历史消息列表，否则历史消息列表会覆盖messages
+    store.switchConversation && store.setSwitchConversation(false);
+    store.setIsLoading(true);
+    // await handleSend(input);
   };
 
   /**
@@ -78,7 +81,10 @@ function useConversation() {
           },
         ]);
       }
-    } catch {}
+    } catch {
+    } finally {
+      store.setIsLoading(false);
+    }
   };
 
   /**

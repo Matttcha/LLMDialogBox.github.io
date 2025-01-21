@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { IBotInfo, IMessage } from "../type";
-import { conversations } from "../mock";
+import { conversations, messages as messagesMock } from "../mock";
 
 // interface IConversations {
 //   [key: string]: IMessageInter[];
@@ -17,8 +17,12 @@ interface IChatState {
   // setConversations(conversations: IConversations): void;
   conversations: TConversation[];
   setConversations(conversations: TConversation[]): void;
+  switchConversation: boolean;
+  setSwitchConversation(switchConversation: boolean): void;
   messages: IMessage[];
   setMessages(messages: IMessage[]): void;
+  isLoading: boolean;
+  setIsLoading(isLoading: boolean): void;
 }
 
 /**
@@ -41,6 +45,11 @@ export const useChatStore = create<IChatState>((set) => ({
   // setConversations: (conversations: IConversations) => set({ conversations }),
   conversations,
   setConversations: (conversations: TConversation[]) => set({ conversations }),
-  messages: [],
+  switchConversation: false,
+  setSwitchConversation: (switchConversation: boolean) =>
+    set({ switchConversation }),
+  messages: messagesMock as IMessage[],
   setMessages: (messages: IMessage[]) => set({ messages }),
+  isLoading: false,
+  setIsLoading: (isLoading: boolean) => set({ isLoading }),
 }));

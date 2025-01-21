@@ -6,10 +6,6 @@ import ChatRecordBox from "../ChatRecordBox";
 import ChatInput from "../ChatInput";
 import { IconDoubleLeft, IconSettings } from "@arco-design/web-react/icon";
 import { useChatStore } from "../../store";
-import { IMessage } from "../../type";
-import { getChat } from "../../request/api";
-import Item from "@arco-design/web-react/es/Breadcrumb/item";
-// import { parseSSEResponse } from "../../utils/chat";
 
 const style = getStyleName("independent-dialog-box");
 
@@ -33,6 +29,7 @@ const IndependentDialogBox = (props: IProps) => {
           onClick={() => {
             if (store.currentConversation) {
               store.setCurrentConversation("");
+              store.setMessages([]);
             }
           }}
         >
@@ -42,6 +39,7 @@ const IndependentDialogBox = (props: IProps) => {
         <div className={style("left-list")}>
           {store.conversations.map((item) => (
             <div
+              key={item.conversationId}
               className={`${style("left-list-item")} ${
                 item.conversationId === store.currentConversation
                   ? style("left-list-item-active")
@@ -50,23 +48,13 @@ const IndependentDialogBox = (props: IProps) => {
               onClick={() => {
                 if (store.currentConversation !== item.conversationId) {
                   store.setCurrentConversation(item.conversationId);
+                  store.setSwitchConversation(true);
                 }
               }}
             >
               {item.text}
             </div>
           ))}
-          {/* {Object.entries(store.conversations).map((item) => (
-            <div
-              className={style("left-list-item")}
-              onClick={() => {
-                setIsNewConversation(false);
-                store.setCurrentConversation(item[0]);
-              }}
-            >
-              {item[1][0].text}
-            </div>
-          ))} */}
         </div>
         <div className={style("left-settings")}>
           <div className={style("left-settings-setting-icon")}>

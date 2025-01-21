@@ -10,21 +10,25 @@ const data = [
   {
     title: "帮我分析这份文件",
     text: "轻松看懂当代消费者的大模型认知程度",
+    question: "帮我分析这份文件",
     file: {},
   },
   {
     title: "看看这张图画了什么",
     text: "",
+    question: "看看这张图画了什么",
     file: {},
   },
   {
     title: "这段代码怎么写",
     text: "用JavaScript实现一颗二叉树",
+    question: "用JavaScript实现一颗二叉树",
     file: {},
   },
   {
     title: "介绍一下你自己",
     text: "你好，你是谁",
+    question: "介绍一下你自己",
   },
 ];
 
@@ -36,7 +40,7 @@ interface IProps {}
  */
 const OriginalChat = (props: IProps) => {
   const store = useChatStore();
-  const { handleSend } = useConversation();
+  const { sendMessage } = useConversation();
 
   return (
     <div className={style("")}>
@@ -50,9 +54,10 @@ const OriginalChat = (props: IProps) => {
       <div className={style("examples")}>
         {data.map((item) => (
           <div
+            key={item.question}
             className={style("examples-example")}
-            onClick={() => {
-              // handleSend();
+            onClick={async () => {
+              await sendMessage({ text: item.question });
             }}
           >
             <div className={style("examples-example-title")}>{item.title}</div>
