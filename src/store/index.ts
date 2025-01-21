@@ -2,19 +2,13 @@ import { create } from "zustand";
 import { IBotInfo, IMessage } from "../type";
 import { conversations, messages as messagesMock } from "../mock";
 
-// interface IConversations {
-//   [key: string]: IMessageInter[];
-// }
-
 type TConversation = { conversationId: string; text: string };
 
 interface IChatState {
   botInfo: IBotInfo;
   setBotInfo(botInfo: IBotInfo): void;
-  currentConversation: string; // IMessageInter[];
+  currentConversation: string;
   setCurrentConversation(currentConversation: string): void;
-  // conversations: IConversations; // IConversation;
-  // setConversations(conversations: IConversations): void;
   conversations: TConversation[];
   setConversations(conversations: TConversation[]): void;
   switchConversation: boolean;
@@ -28,7 +22,11 @@ interface IChatState {
 /**
  * 对话框状态管理仓库
  * @botInfo: 智能体信息
+ * @currentConversation: 当前会话的id
  * @conversations: 历史会话列表
+ * @switchConversation: 是否是切换历史会话
+ * @messages: 消息列表
+ * @isLoading: 消息是否发送中
  */
 export const useChatStore = create<IChatState>((set) => ({
   botInfo: {
@@ -40,9 +38,6 @@ export const useChatStore = create<IChatState>((set) => ({
   currentConversation: "",
   setCurrentConversation: (currentConversation: string) =>
     set({ currentConversation }),
-
-  // conversations,
-  // setConversations: (conversations: IConversations) => set({ conversations }),
   conversations,
   setConversations: (conversations: TConversation[]) => set({ conversations }),
   switchConversation: false,
