@@ -22,13 +22,24 @@
     padding: 5px;
     font-size: 16px;
     box-sizing: border-box;
+    &-text-user {
+      color: var(--color-fg-default);
+      font-size: 14px;
+      line-height: 1.5;
+      word-wrap: break-word;
+      -webkit-text-size-adjust: 100%;
+      margin-left: 10px;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
     &-imgs {
       display: flex;
       flex-wrap: wrap;
-      margin-bottom: 10px;
+      margin-left: 5px;
+      margin-top: 5px;
       &-img {
-        width: 100px;
-        height: 50px;
+        width: 50px;
+        height: 28px;
         background-color: pink;
         margin-right: 10px;
         margin-bottom: 10px;
@@ -37,20 +48,41 @@
     &-files {
       display: flex;
       flex-wrap: wrap;
-      margin-bottom: 10px;
+      
       &-file {
-        width: 100px;
-        height: 50px;
-        background-color: green;
-        margin-right: 10px;
+        margin-left: 5px;
         margin-bottom: 10px;
+        position: relative;
+        font-size: 12.5px;
+        height: 25px;
+        width: 150px;
+        margin-right: 10px;
+        // margin-bottom: 5px;
+        background-color: #ebf1f7;
+        display: flex;
+        // justify-content: center;
+        align-items: center;
+        padding: 0px 5px;
+        border-radius: 5px;
+        &-name {
+          margin-left: 3px;
+          white-space: nowrap;
+            /* 禁止文本换行 */
+          overflow: hidden;
+            /* 隐藏溢出内容 */
+          text-overflow: ellipsis;
+        }
       }
     }
   }
   &-content-assistant {
     background-color: #fff;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    padding: 15px;
+    padding: 15px 25px;
+  }
+  &-content-user {
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   }
   &-suggestions {
     margin-top: 10px;
@@ -60,6 +92,7 @@
     }
     &-suggestion {
       color: #4955f5;
+      width: 485px;
     }
   }
 }

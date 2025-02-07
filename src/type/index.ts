@@ -1,13 +1,33 @@
+export interface IUserConfig {
+  token: string;
+  botId: string;
+  userName: string;
+  stream: boolean;
+}
+
 export interface IBotInfo {
   name: string;
   description: string;
   icon_url?: string;
 }
 
+export interface IImage {
+  file_name: string;
+  id: string;
+  base64: string;
+  status?: string;
+}
+ 
+export interface IFile {
+  file_name: string;
+  id: string;
+  status?: string;
+}
+
 export interface IInput {
   text: string;
-  fileList?: [];
-  imageList?: [];
+  fileList?: IFile[];
+  imageList?: IImage[];
 }
 
 export type object_string_type = "text" | "file" | "image";
@@ -79,8 +99,8 @@ export interface IMessage {
   role: role;
   text: string;
   suggestions?: string[];
-  files?: FileInfoInter[];
-  images?: FileInfoInter[];
+  files?: IFile[];
+  images?: IImage[];
   error?: string;
 }
 export interface MessageApiInter {

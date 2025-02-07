@@ -1,27 +1,32 @@
+import { getUserConfig } from "../store/index";
+
 export const baseUrl = "https://api.coze.cn/"; // 国内地址
 
-const myToken = "pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM"; //测试的时候填一下
-const myBotId = "7460125530122190900"; //测试的时候填一下
-const user = "evilragdollcat";
-
+// "pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM"; //测试的时候填一下
+// "7460125530122190900"; //测试的时候填一下
+// "evilragdollcat";
 /**
  * 获取智能体信息
  * @returns
  */
 export const getBotInfo = async () => {
   const res = await fetch(
-    `${baseUrl}v1/bot/get_online_info?bot_id=${myBotId}`,
+    `${baseUrl}v1/bot/get_online_info?bot_id=${getUserConfig().botId}`,
     {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${myToken}`,
+        Authorization: `Bearer ${getUserConfig().token}`,
         "Content-Type": "application/json",
       },
     }
   );
-  const resJson = await res.json();
-  const { code, data, msg } = resJson;
-  return data;
+  try {
+    const resJson = await res.json();
+    const { code, data, msg } = resJson;
+    return data;
+  } catch {
+    // return botInfo;
+  }
 };
 
 /**
@@ -36,24 +41,23 @@ export const getChat = async (
   return await fetch(`${baseUrl}v3/chat?conversation_id=${conversation_id}`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${myToken}`,
+      Authorization: `Bearer ${getUserConfig().token}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      bot_id: myBotId, // 需要改为可配置
-      user_id: user, // 需要改为可配置
-      stream: false, // 需要改为可配置
+      bot_id: getUserConfig().botId, 
+      user_id: getUserConfig().userName , 
+      stream: getUserConfig().stream, 
       auto_save_history: true,
       additional_messages: [
         {
           role: "user",
           content,
-          content_type,
+          content_type, 
         },
       ],
     }),
   });
-  // return {}; // 节省api调用额度
 };
 
 /**
@@ -72,7 +76,7 @@ export const asyncChatRetrieve = async (
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${myToken}`,
+              Authorization: `Bearer ${getUserConfig().token }`,
               "Content-Type": "application/json",
             },
           }
@@ -112,7 +116,7 @@ export const getChatMessage = async (
     {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${myToken}`,
+        Authorization: `Bearer ${getUserConfig().token}`,
         "Content-Type": "application/json",
       },
     }
@@ -133,7 +137,7 @@ export const getMessageList = async (conversation_id?: string) => {
     {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${myToken}`,
+        Authorization: `Bearer ${getUserConfig().token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({}),

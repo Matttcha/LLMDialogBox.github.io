@@ -2,35 +2,70 @@ import React, { useEffect, useState } from "react";
 import { useChatStore } from "../store";
 import { asyncChatRetrieve, getChat } from "../request/api";
 import { IContent, IInput, IMessage } from "../type";
-import { assistantReply } from "../mock";
+import { assistantReply2 } from "../mock";
+
+
 
 function useConversation() {
   const store = useChatStore();
 
   const sendMessage = async (input: IInput) => {
     // 在接口数据返回前插入两条正在处理中的问答
-    store.setMessages([
+    const newMessages = [
       ...store.messages,
       {
         role: "user",
         text: input.text,
+        files: input.fileList,
+        images: input.imageList,
+
       },
       {
         role: "assistant",
         text: "",
       },
-    ]);
+    ] as IMessage[]
+    store.setMessages(newMessages);
     // 发送消息不需要重新请求历史消息列表，否则历史消息列表会覆盖messages
     store.switchConversation && store.setSwitchConversation(false);
     store.setIsLoading(true);
-    // await handleSend(input);
+    // await handleSend(input, newMessages);
+
+
+
+    //// mock
+    const conversationId = store.currentConversation;
+    if (!conversationId) {  //没有conversationId
+      store.setConversations([
+        { conversationId: '7460952801024262182', text: input.text },
+        ...store.conversations,
+      ]);
+      store.setCurrentConversation('7460952801024262182');
+    }
+      const data = await assistantReply2; // mock
+      const answer = data.find((item) => item.type === "answer")?.content;
+      const follow_up = data
+        .filter((item) => item.type === "follow_up")
+        .map((item) => item.content);
+      store.setMessages([
+        ...newMessages.slice(0, -1),
+        {
+          role: "assistant",
+          text: answer || "",
+          suggestions: follow_up,
+        },
+      ]);
+    
+    store.setIsLoading(false);
+
+    //////mock
   };
 
   /**
    * handleSend 发送消息
    * @param input
    */
-  const handleSend = async (input: IInput) => {
+    const handleSend = async (input: IInput, newMessages) => {
     // 获取当前会话id
     const conversationId = store.currentConversation;
     // 发送【发起对话】接口，获取conversation_id和chat_id
@@ -43,7 +78,6 @@ function useConversation() {
         content_type,
         conversationId
       );
-
       const contentType = res.headers.get("Content-Type");
       if (contentType?.includes("text/event-stream")) {
         // 流式
@@ -57,7 +91,7 @@ function useConversation() {
           msg,
         } = resJson;
 
-        if (!conversationId) {
+        if (!conversationId) {  //没有conversationId
           store.setConversations([
             { conversationId: conversation_id, text: input.text },
             ...store.conversations,
@@ -73,7 +107,7 @@ function useConversation() {
           .filter((item) => item.type === "follow_up")
           .map((item) => item.content);
         store.setMessages([
-          ...store.messages.slice(0, -1),
+          ...newMessages.slice(0, -1), 
           {
             role: "assistant",
             text: answer || "",
@@ -106,7 +140,7 @@ function useConversation() {
       input.fileList.forEach((file) => {
         contentArr.push({
           type: "file",
-          file_id: file.file_id,
+          file_id: file.id,
         });
       });
     }
@@ -115,7 +149,7 @@ function useConversation() {
       input.imageList.forEach((image) => {
         contentArr.push({
           type: "image",
-          file_url: image.file_url,
+          file_id: image.id,
         });
       });
     }
@@ -123,10 +157,10 @@ function useConversation() {
   };
 
   const handleSSEResponse = async (res) => {
-    await parseSSEResponse(res, (message) => {});
+    await parseSSEResponse(res, (message) => { });
   };
 
-  const parseSSEResponse = async (res, onMessage) => {};
+  const parseSSEResponse = async (res, onMessage) => { };
 
   return {
     sendMessage,

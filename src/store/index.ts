@@ -1,10 +1,12 @@
 import { create } from "zustand";
-import { IBotInfo, IMessage } from "../type";
+import { IBotInfo, IMessage, IUserConfig } from "../type";
 import { conversations, messages as messagesMock } from "../mock";
 
 type TConversation = { conversationId: string; text: string };
 
 interface IChatState {
+  userConfig: IUserConfig;
+  setUserConfig(userConfig: IUserConfig): void;
   botInfo: IBotInfo;
   setBotInfo(botInfo: IBotInfo): void;
   currentConversation: string;
@@ -29,6 +31,14 @@ interface IChatState {
  * @isLoading: 消息是否发送中
  */
 export const useChatStore = create<IChatState>((set) => ({
+  userConfig: {
+    token: "",
+    botId: "",
+    userName: "",
+    stream: false,
+  },
+  setUserConfig: (userConfig: IUserConfig) => set({ userConfig }),
+
   botInfo: {
     name: "你的智能助手",
     description:
@@ -43,8 +53,14 @@ export const useChatStore = create<IChatState>((set) => ({
   switchConversation: false,
   setSwitchConversation: (switchConversation: boolean) =>
     set({ switchConversation }),
-  messages: messagesMock as IMessage[],
+  messages: [], // messagesMock as IMessage[],
   setMessages: (messages: IMessage[]) => set({ messages }),
   isLoading: false,
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
+  
 }));
+
+
+
+export const getUserConfig = () => useChatStore.getState().userConfig // 
+

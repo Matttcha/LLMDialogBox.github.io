@@ -4,6 +4,7 @@ import InlineDialogBox from "./components/InlineDialogBox";
 import { useChatStore } from "./store";
 import { getBotInfo } from "./request/api";
 import { botInfo } from "./mock";
+// import '@ant-design/v5-patch-for-react-19';
 
 const botId = "";
 

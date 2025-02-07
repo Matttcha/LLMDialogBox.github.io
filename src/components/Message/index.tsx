@@ -5,6 +5,8 @@ import { useChatStore } from "../../store";
 import { IMessage } from "../../type";
 import { Skeleton } from "antd";
 import useConversation from "../../hooks/useConversation";
+import Markdown from "../Markdown";
+
 const style = getStyleName("message");
 
 interface IProps {
@@ -12,10 +14,6 @@ interface IProps {
   showSuggestions?: boolean;
 }
 
-// const suggestions = [
-//   "Python语言适用于哪些领域？",
-//   "分享一些用Python语言实现的案例",
-// ];
 
 /**
  * 对话消息组件：分为【用户提问】和【智能助手答复】
@@ -26,7 +24,6 @@ const Message = (props: IProps) => {
   const { role, text, suggestions = [], files, images } = message;
   const store = useChatStore();
   const { sendMessage } = useConversation();
-  useEffect(() => {}, [store]);
   return (
     <div className={style("")}>
       {/* 头像 */}
@@ -41,7 +38,7 @@ const Message = (props: IProps) => {
       <div>
         <div
           className={`${style("content")} ${
-            role === "assistant" ? style("content-assistant") : ""
+            role === "assistant" ? style("content-assistant") : style("content-user")
           }`}
         >
           <Skeleton
@@ -49,22 +46,32 @@ const Message = (props: IProps) => {
             loading={role === "assistant" && store.isLoading && !text}
           >
             {/* 如果有图片，展示图片 */}
-            {images && images.length && (
+            {images && (
               <div className={style("content-imgs")}>
                 {images?.map((img) => (
-                  <div className={style("content-imgs-img")}>图片</div>
+                  <div className={style("content-imgs-img")}>
+                    <img src={img.base64} style={{height:"100%",width:"100%",objectFit:'cover'}}></img>
+                  </div>
                 ))}
               </div>
             )}
+
             {/* 如果有文件/附件，展示附件 */}
-            {files && files.length && (
+            {files && (
               <div className={style("content-files")}>
                 {files?.map((file) => (
-                  <div className={style("content-files-file")}>文件</div>
+                  <div className={style("content-files-file")}>
+                    <div className={style("content-files-file-name")}>
+                      {file.file_name}
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
-            <div className={style("content-text")}>{text}</div>
+
+            <div className={style("content-text")}>
+              {role === "assistant" ? <Markdown>{text}</Markdown> : <div className={style("content-text-user")}>{text}</div>}
+            </div>
           </Skeleton>
         </div>
         {showSuggestions && (

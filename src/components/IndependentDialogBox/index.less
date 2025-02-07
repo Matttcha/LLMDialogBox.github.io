@@ -68,6 +68,11 @@
         color: #676c90;
       }
       &-item-active {
+        white-space: nowrap;
+            /* 禁止文本换行 */
+        overflow: hidden;
+            /* 隐藏溢出内容 */
+        text-overflow: ellipsis;
         background: rgba(73, 85, 245, 0.07);
       }
       &-item:hover {
@@ -109,4 +114,11 @@
     padding: 30px 0;
     box-sizing: border-box;
   }
+}
+.token-botId {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+.switchStream {
+  margin-left: 10px;
 }

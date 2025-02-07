@@ -6,7 +6,7 @@ import ChatRecordBox from "../ChatRecordBox";
 import ChatInput from "../ChatInput";
 import { IconDoubleLeft, IconSettings } from "@arco-design/web-react/icon";
 import { useChatStore } from "../../store";
-import { Modal } from "antd";
+import { Modal, Input, Switch } from "antd";
 
 const style = getStyleName("independent-dialog-box");
 
@@ -19,6 +19,24 @@ interface IProps {}
 const IndependentDialogBox = (props: IProps) => {
   const store = useChatStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentToken,setCurrentToken] = useState<string>("")
+  const [currentBotId, setCurrentBotId] = useState<string>("")
+  const [currentUserName, setCurrentUserName] = useState<string>("")
+  const [currentStream, setCurrentStream] = useState<boolean>(false)
+  
+  const onTokenChange = (e) => { setCurrentToken(e.target.value) }
+  const onBotIdChange = (e) => {setCurrentBotId(e.target.value)}  
+  const onUserNameChange = (e) => {setCurrentUserName(e.target.value)}  
+  const onStreamChange = (value) => {setCurrentStream(value)}  
+  const onUserConfigSave = () => {
+    store.setUserConfig({
+      token: currentToken,
+      botId: currentBotId,
+      userName: currentUserName,
+      stream: currentStream,
+    })
+  }
+
   return (
     <div className={style("")}>
       <div className={style("left")}>
@@ -81,13 +99,28 @@ const IndependentDialogBox = (props: IProps) => {
       </div>
       <Modal
         open={isModalOpen}
+        onOk={onUserConfigSave}
         onCancel={() => {
           setIsModalOpen(false);
         }}
+        okText='Save'
       >
-        <div></div>
-        <div>456</div>
-        <div>789</div>
+        <div>
+          Token
+          <Input placeholder="请输入您的 Coze Token"  className="token-botId" onChange={onTokenChange}/>
+        </div>
+        <div>
+          BotId
+          <Input placeholder="请输入您的 BotId"  className="token-botId" onChange={onBotIdChange}/>
+        </div>
+        <div>
+          用户名
+          <Input placeholder="请输入您的用户名"  className="token-botId" onChange={onUserNameChange}/>
+        </div>
+        <div>
+          流式响应
+          <Switch defaultChecked className="switchStream" onChange={onStreamChange}/>
+        </div>
       </Modal>
     </div>
   );
