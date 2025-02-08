@@ -1,4 +1,6 @@
 import { getUserConfig } from "../store/index";
+import { message } from "antd";
+import { botInfo } from "../mock";
 
 export const baseUrl = "https://api.coze.cn/"; // 国内地址
 
@@ -23,10 +25,11 @@ export const getBotInfo = async () => {
   try {
     const resJson = await res.json();
     const { code, data, msg } = resJson;
+    if (code !== 0 || !data) {
+      return botInfo;
+    }
     return data;
-  } catch {
-    // return botInfo;
-  }
+  } catch {}
 };
 
 /**
@@ -38,16 +41,21 @@ export const getChat = async (
   content_type,
   conversation_id?: string
 ) => {
+  const { token, botId, userName, stream = true } = getUserConfig();
+  if (!token || !botId) {
+    message.error("请先设置您的的 COZE TOKEN 和 BOT ID");
+    return;
+  }
   return await fetch(`${baseUrl}v3/chat?conversation_id=${conversation_id}`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${getUserConfig().token}`,
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      bot_id: getUserConfig().botId,
-      user_id: getUserConfig().userName,
-      stream: getUserConfig().stream,
+      bot_id: botId,
+      user_id: userName,
+      stream,
       auto_save_history: true,
       additional_messages: [
         {

@@ -5,6 +5,7 @@ import { IContent, IInput, IMessage } from "../type";
 import { assistantReply2 } from "../mock";
 import { isEmpty } from "lodash-es";
 import { createParser } from "eventsource-parser";
+import { message } from "antd";
 
 const statusTextMap = new Map([
   [400, "Bad Request"],
@@ -83,6 +84,16 @@ function useConversation() {
         content_type,
         conversationId
       );
+      const { code, msg } = await res.json();
+      if (code !== 0) {
+        if (code === 4100) {
+          message.error("请设置正确的 COZE TOKEN 和 BOT ID");
+        } else {
+          message.error(msg);
+        }
+        return;
+      }
+
       const contentType = res.headers.get("Content-Type");
       if (contentType?.includes("text/event-stream")) {
         // 流式

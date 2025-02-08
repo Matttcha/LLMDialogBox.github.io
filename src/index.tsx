@@ -42,7 +42,7 @@ const LLMDialogBox = (props: IProps) => {
       }
     };
     fetchBotInfo();
-  }, [botId]); // botId后续要改，这里只是暂时写一下
+  }, [store.userConfig]); // botId后续要改，这里只是暂时写一下
 
   return (
     <>

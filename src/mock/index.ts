@@ -37,17 +37,6 @@ export const botInfo = {
   shortcut_commands: [],
 };
 
-export const conversations = [
-  // {
-  //   conversationId: "abc",
-  //   text: "布偶猫怎么样",
-  // },
-  // {
-  //   conversationId: "def",
-  //   text: "布偶猫喜欢吃什么",
-  // },
-];
-
 export const assistantReply1 = [
   {
     bot_id: "7460125530122190900",
@@ -113,68 +102,70 @@ export const assistantReply1 = [
   },
 ];
 
-export const  assistantReply2 = [
+export const assistantReply2 = [
   {
-    "bot_id": "7460125530122190900",
-    "chat_id": "7468253872277159999",
-    "content": "在JavaScript中，可以通过定义节点类和树类来实现一棵二叉树。以下是一个简单的实现示例，包括插入节点和中序遍历的方法：\n\n```javascript\n// 定义二叉树节点类\nclass TreeNode {\n    constructor(value) {\n        this.value = value;\n        this.left = null;\n        this.right = null;\n    }\n}\n\n// 定义二叉树类\nclass BinaryTree {\n    constructor() {\n        this.root = null;\n    }\n\n    // 插入节点方法\n    insert(value) {\n        const newNode = new TreeNode(value);\n        if (!this.root) {\n            this.root = newNode;\n            return;\n        }\n        let current = this.root;\n        while (true) {\n            if (value < current.value) {\n                if (!current.left) {\n                    current.left = newNode;\n                    return;\n                }\n                current = current.left;\n            } else {\n                if (!current.right) {\n                    current.right = newNode;\n                    return;\n                }\n                current = current.right;\n            }\n        }\n    }\n\n    // 中序遍历方法\n    inorderTraversal(node = this.root) {\n        if (!node) return;\n        this.inorderTraversal(node.left);\n        console.log(node.value);\n        this.inorderTraversal(node.right);\n    }\n}\n\n\n// 测试代码\nconst tree = new BinaryTree();\ntree.insert(5);\ntree.insert(3);\ntree.insert(7);\ntree.insert(2);\ntree.insert(4);\ntree.insert(6);\ntree.insert(8);\n\nconsole.log(\"中序遍历结果:\");\ntree.inorderTraversal();\n```\n\n### 代码说明：\n1. **TreeNode类**：表示二叉树的节点，每个节点包含一个值 `value`，以及指向左子节点和右子节点的引用 `left` 和 `right`。\n2. **BinaryTree类**：表示二叉树，包含一个根节点 `root`。\n    - **insert方法**：用于向二叉树中插入新节点。它从根节点开始，比较新节点的值与当前节点的值，决定向左还是向右子树移动，直到找到合适的位置插入新节点。\n    - **inorderTraversal方法**：用于中序遍历二叉树。中序遍历按照左子树、根节点、右子树的顺序访问节点。\n\n上述代码创建了一个二叉树，并插入了一些节点，最后进行中序遍历并输出节点的值。你可以根据需要扩展该类，添加更多的方法，如前序遍历、后序遍历、删除节点等功能。  ",
-    "content_type": "text",
-    "conversation_id": "7468253872277127231",
-    "created_at": 1738838358,
-    "id": "7468253877909848076",
-    "role": "assistant",
-    "type": "answer",
-    "updated_at": 1738838368
+    bot_id: "7460125530122190900",
+    chat_id: "7468253872277159999",
+    content:
+      '在JavaScript中，可以通过定义节点类和树类来实现一棵二叉树。以下是一个简单的实现示例，包括插入节点和中序遍历的方法：\n\n```javascript\n// 定义二叉树节点类\nclass TreeNode {\n    constructor(value) {\n        this.value = value;\n        this.left = null;\n        this.right = null;\n    }\n}\n\n// 定义二叉树类\nclass BinaryTree {\n    constructor() {\n        this.root = null;\n    }\n\n    // 插入节点方法\n    insert(value) {\n        const newNode = new TreeNode(value);\n        if (!this.root) {\n            this.root = newNode;\n            return;\n        }\n        let current = this.root;\n        while (true) {\n            if (value < current.value) {\n                if (!current.left) {\n                    current.left = newNode;\n                    return;\n                }\n                current = current.left;\n            } else {\n                if (!current.right) {\n                    current.right = newNode;\n                    return;\n                }\n                current = current.right;\n            }\n        }\n    }\n\n    // 中序遍历方法\n    inorderTraversal(node = this.root) {\n        if (!node) return;\n        this.inorderTraversal(node.left);\n        console.log(node.value);\n        this.inorderTraversal(node.right);\n    }\n}\n\n\n// 测试代码\nconst tree = new BinaryTree();\ntree.insert(5);\ntree.insert(3);\ntree.insert(7);\ntree.insert(2);\ntree.insert(4);\ntree.insert(6);\ntree.insert(8);\n\nconsole.log("中序遍历结果:");\ntree.inorderTraversal();\n```\n\n### 代码说明：\n1. **TreeNode类**：表示二叉树的节点，每个节点包含一个值 `value`，以及指向左子节点和右子节点的引用 `left` 和 `right`。\n2. **BinaryTree类**：表示二叉树，包含一个根节点 `root`。\n    - **insert方法**：用于向二叉树中插入新节点。它从根节点开始，比较新节点的值与当前节点的值，决定向左还是向右子树移动，直到找到合适的位置插入新节点。\n    - **inorderTraversal方法**：用于中序遍历二叉树。中序遍历按照左子树、根节点、右子树的顺序访问节点。\n\n上述代码创建了一个二叉树，并插入了一些节点，最后进行中序遍历并输出节点的值。你可以根据需要扩展该类，添加更多的方法，如前序遍历、后序遍历、删除节点等功能。  ',
+    content_type: "text",
+    conversation_id: "7468253872277127231",
+    created_at: 1738838358,
+    id: "7468253877909848076",
+    role: "assistant",
+    type: "answer",
+    updated_at: 1738838368,
   },
   {
-    "bot_id": "7460125530122190900",
-    "chat_id": "7468253872277159999",
-    "content": "{\"msg_type\":\"generate_answer_finish\",\"data\":\"{\\\"finish_reason\\\":0,\\\"FinData\\\":\\\"\\\"}\",\"from_module\":null,\"from_unit\":null}",
-    "content_type": "text",
-    "conversation_id": "7468253872277127231",
-    "created_at": 1738838371,
-    "id": "7468253930770677796",
-    "role": "assistant",
-    "type": "verbose",
-    "updated_at": 1738838370
+    bot_id: "7460125530122190900",
+    chat_id: "7468253872277159999",
+    content:
+      '{"msg_type":"generate_answer_finish","data":"{\\"finish_reason\\":0,\\"FinData\\":\\"\\"}","from_module":null,"from_unit":null}',
+    content_type: "text",
+    conversation_id: "7468253872277127231",
+    created_at: 1738838371,
+    id: "7468253930770677796",
+    role: "assistant",
+    type: "verbose",
+    updated_at: 1738838370,
   },
   {
-    "bot_id": "7460125530122190900",
-    "chat_id": "7468253872277159999",
-    "content": "如何在JavaScript中计算二叉树的高度？",
-    "content_type": "text",
-    "conversation_id": "7468253872277127231",
-    "created_at": 1738838371,
-    "id": "7468253930770694180",
-    "role": "assistant",
-    "type": "follow_up",
-    "updated_at": 1738838370
+    bot_id: "7460125530122190900",
+    chat_id: "7468253872277159999",
+    content: "如何在JavaScript中计算二叉树的高度？",
+    content_type: "text",
+    conversation_id: "7468253872277127231",
+    created_at: 1738838371,
+    id: "7468253930770694180",
+    role: "assistant",
+    type: "follow_up",
+    updated_at: 1738838370,
   },
   {
-    "bot_id": "7460125530122190900",
-    "chat_id": "7468253872277159999",
-    "content": "用JavaScript实现二叉树的先序遍历和后序遍历。",
-    "content_type": "text",
-    "conversation_id": "7468253872277127231",
-    "created_at": 1738838371,
-    "id": "7468253930770710564",
-    "role": "assistant",
-    "type": "follow_up",
-    "updated_at": 1738838370
+    bot_id: "7460125530122190900",
+    chat_id: "7468253872277159999",
+    content: "用JavaScript实现二叉树的先序遍历和后序遍历。",
+    content_type: "text",
+    conversation_id: "7468253872277127231",
+    created_at: 1738838371,
+    id: "7468253930770710564",
+    role: "assistant",
+    type: "follow_up",
+    updated_at: 1738838370,
   },
   {
-    "bot_id": "7460125530122190900",
-    "chat_id": "7468253872277159999",
-    "content": "提供一些实际的例子，展示如何在项目中使用JavaScript实现的二叉树。",
-    "content_type": "text",
-    "conversation_id": "7468253872277127231",
-    "created_at": 1738838371,
-    "id": "7468253930770726948",
-    "role": "assistant",
-    "type": "follow_up",
-    "updated_at": 1738838370
-  }
-]
+    bot_id: "7460125530122190900",
+    chat_id: "7468253872277159999",
+    content: "提供一些实际的例子，展示如何在项目中使用JavaScript实现的二叉树。",
+    content_type: "text",
+    conversation_id: "7468253872277127231",
+    created_at: 1738838371,
+    id: "7468253930770726948",
+    role: "assistant",
+    type: "follow_up",
+    updated_at: 1738838370,
+  },
+];
 export const messages = [
   {
     role: "user",
@@ -191,17 +182,16 @@ export const messages = [
   },
 ];
 
-
 export const file = {
-    "code": 0,
-    "data": {
-        "bytes": 51200,
-        "created_at": 1738756460,
-        "file_name": "中国海洋大学全日制本科生2025年一月批次毕业申请表.doc",
-        "id": "7467900276428177408"
-    },
-    "msg": ""
-}
+  code: 0,
+  data: {
+    bytes: 51200,
+    created_at: 1738756460,
+    file_name: "中国海洋大学全日制本科生2025年一月批次毕业申请表.doc",
+    id: "7467900276428177408",
+  },
+  msg: "",
+};
 
 // export const conversations = {
 //   abc: [

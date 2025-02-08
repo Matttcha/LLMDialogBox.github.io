@@ -115,18 +115,18 @@ export default forwardRef((props: IProps, ref) => {
         form_data.append("file", file);
 
         // ````````
-        // const res = await fetch('https://api.coze.cn/v1/files/upload', {
-        //   method: "POST",
-        //   headers: {
-        //     Authorization: "Bearer " + 'pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM',
-        //   },
-        //   body: form_data,
-        // });
-        // const jsonData = await res.json();
+        const res = await fetch("https://api.coze.cn/v1/files/upload", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + "",
+          },
+          body: form_data,
+        });
+        const jsonData = await res.json();
 
         // ````````
 
-        const jsonData = await fileUpload;
+        // const jsonData = await fileUpload;
 
         let fileExtension;
         if (typeof file.name === "string") {
@@ -144,7 +144,7 @@ export default forwardRef((props: IProps, ref) => {
           jsonData.data.id,
           base64,
           "上传完成"
-        ); 
+        );
         return jsonData;
       }, 3000);
     } catch (err) {

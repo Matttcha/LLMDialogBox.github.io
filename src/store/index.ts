@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { IBotInfo, IMessage, IUserConfig } from "../type";
-import { conversations, messages as messagesMock } from "../mock";
+import { messages as messagesMock } from "../mock";
 
 type TConversation = { conversationId: string; text: string };
 
@@ -32,10 +32,9 @@ interface IChatState {
  */
 export const useChatStore = create<IChatState>((set) => ({
   userConfig: {
-    token:
-      "pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM",
-    botId: "7460125530122190900",
-    userName: "evilragdollcat",
+    token: "",
+    botId: "",
+    userName: "",
     stream: true,
   },
   setUserConfig: (userConfig: IUserConfig) => set({ userConfig }),
@@ -49,7 +48,7 @@ export const useChatStore = create<IChatState>((set) => ({
   currentConversation: "",
   setCurrentConversation: (currentConversation: string) =>
     set({ currentConversation }),
-  conversations,
+  conversations: [],
   setConversations: (conversations: TConversation[]) => set({ conversations }),
   switchConversation: false,
   setSwitchConversation: (switchConversation: boolean) =>
