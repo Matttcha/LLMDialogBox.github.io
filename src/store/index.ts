@@ -32,10 +32,11 @@ interface IChatState {
  */
 export const useChatStore = create<IChatState>((set) => ({
   userConfig: {
-    token: "",
-    botId: "",
-    userName: "",
-    stream: false,
+    token:
+      "pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM",
+    botId: "7460125530122190900",
+    userName: "evilragdollcat",
+    stream: true,
   },
   setUserConfig: (userConfig: IUserConfig) => set({ userConfig }),
 
@@ -57,10 +58,6 @@ export const useChatStore = create<IChatState>((set) => ({
   setMessages: (messages: IMessage[]) => set({ messages }),
   isLoading: false,
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
-  
 }));
 
-
-
-export const getUserConfig = () => useChatStore.getState().userConfig // 
-
+export const getUserConfig = () => useChatStore.getState().userConfig;

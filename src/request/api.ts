@@ -45,15 +45,15 @@ export const getChat = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      bot_id: getUserConfig().botId, 
-      user_id: getUserConfig().userName , 
-      stream: getUserConfig().stream, 
+      bot_id: getUserConfig().botId,
+      user_id: getUserConfig().userName,
+      stream: getUserConfig().stream,
       auto_save_history: true,
       additional_messages: [
         {
           role: "user",
           content,
-          content_type, 
+          content_type,
         },
       ],
     }),
@@ -76,7 +76,7 @@ export const asyncChatRetrieve = async (
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${getUserConfig().token }`,
+              Authorization: `Bearer ${getUserConfig().token}`,
               "Content-Type": "application/json",
             },
           }
