@@ -5,6 +5,8 @@ import { conversations, messages as messagesMock } from "../mock";
 type TConversation = { conversationId: string; text: string };
 
 interface IChatState {
+
+
   userConfig: IUserConfig;
   setUserConfig(userConfig: IUserConfig): void;
   botInfo: IBotInfo;
