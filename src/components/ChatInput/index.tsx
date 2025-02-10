@@ -83,6 +83,14 @@ const ChatInput = (props: IProps) => {
       setFileList([...fileList as IFile[], file as IFile])
     }
   }
+  const updateFileListFail = (type: string) => {
+    if (type === 'img') {
+      setImageList([...imageList as IImage[]])
+    }
+    if (type === 'file') {
+      setFileList([...fileList as IFile[]])
+    }
+  }
 
 
   return (
@@ -149,6 +157,9 @@ const ChatInput = (props: IProps) => {
           <div
             className={`${style("btns-btn")} ${style("btns-send")}`}
             onClick={async () => {
+              if(store.isLoading){return}
+              if(input.replace(/\s+/g, '')===''){return}
+
               const fileStatusList = fileList.map(item => item.status)
               const imageStatusList = imageList.map(item=> item.status)
               if ([...fileStatusList, ...imageStatusList].includes('上传中')) {
@@ -171,7 +182,7 @@ const ChatInput = (props: IProps) => {
           </div>
         </div>
       </div>
-      <FileUpload ref={fileUploadRef} onUploadSuccess={onUploadSuccess} updateFileList={updateFileList} />
+      <FileUpload ref={fileUploadRef} onUploadSuccess={onUploadSuccess} updateFileList={updateFileList} updateFileListFail={updateFileListFail} />
     </>
   );
 };

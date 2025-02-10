@@ -24,6 +24,16 @@ const Message = (props: IProps) => {
   const { role, text, suggestions = [], files, images } = message;
   const store = useChatStore();
   const { sendMessage } = useConversation();
+  const messagesRef = useRef<HTMLDivElement>(null);
+ 
+    // 当消息列表更新时，滚动到底部
+    useEffect(() => {
+        const messagesContainer = messagesRef.current;
+        if (messagesContainer) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }, [message]); 
+  
   return (
     <div className={style("")}>
       {/* 头像 */}
@@ -39,7 +49,8 @@ const Message = (props: IProps) => {
         <div
           className={`${style("content")} ${
             role === "assistant" ? style("content-assistant") : style("content-user")
-          }`}
+            }`}
+          ref={messagesRef}
         >
           <Skeleton
             active

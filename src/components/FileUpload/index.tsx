@@ -8,6 +8,8 @@ import React, {
 import { message } from "antd";
 import { file as fileUpload } from "../../mock";
 import { IFile, IImage } from "../../type";
+import { uploadFile } from "../../request/api";
+
 
 interface IProps {
   onUploadSuccess: (
@@ -17,10 +19,11 @@ interface IProps {
     uploadStatus?: string
   ) => void;
   updateFileList: (type: string, file: IFile | IImage) => void;
+  updateFileListFail: (type: string) => void;
 }
 
 export default forwardRef((props: IProps, ref) => {
-  const { onUploadSuccess, updateFileList } = props;
+  const { onUploadSuccess, updateFileList, updateFileListFail } = props;
   const fileInputRef = useRef<any>("");
   const [fileName, setFileName] = useState<string>("");
 
@@ -115,18 +118,21 @@ export default forwardRef((props: IProps, ref) => {
         form_data.append("file", file);
 
         // ````````
-        // const res = await fetch('https://api.coze.cn/v1/files/upload', {
-        //   method: "POST",
-        //   headers: {
-        //     Authorization: "Bearer " + 'pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM',
-        //   },
-        //   body: form_data,
-        // });
-        // const jsonData = await res.json();
+        const jsonData = await uploadFile(form_data)
+        console.log(jsonData)
 
         // ````````
 
-        const jsonData = await fileUpload;
+        // const jsonData = await fileUpload;
+        const code = jsonData.code
+        const msg = jsonData.msg
+        if (code !== 0) {
+          message.error(msg)
+          //去除filelist imagelist最后一项
+          imageType.includes(file.name.split(".").slice(-1)[0])?updateFileListFail("img"):updateFileListFail("file")
+          return
+        }
+
 
         let fileExtension;
         if (typeof file.name === "string") {

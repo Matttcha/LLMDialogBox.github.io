@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./index.less";
 import getStyleName from "../../utils/getStyleName";
 import Message from "../Message";
@@ -27,8 +27,17 @@ const ChatRecordBox = (props: IProps) => {
     }
   }, [store.switchConversation]);
 
+     const messagesRef = useRef<HTMLDivElement>(null);
+   
+      // 当消息列表更新时，滚动到底部
+      useEffect(() => {
+          const messagesContainer = messagesRef.current;
+          if (messagesContainer) {
+              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+          }
+      }, [store.messages]); 
   return (
-    <div className={style("")}>
+    <div className={style("")} ref={messagesRef}>
       {store.messages.map((message, index) => (
         <Message
           message={message}

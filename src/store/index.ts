@@ -34,10 +34,12 @@ interface IChatState {
  */
 export const useChatStore = create<IChatState>((set) => ({
   userConfig: {
-    token:
-      "pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM",
+    // token:"",
+      token:"pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM",
     botId: "7460125530122190900",
+    // botId: "",
     userName: "evilragdollcat",
+    // userName: "",
     stream: true,
   },
   setUserConfig: (userConfig: IUserConfig) => set({ userConfig }),

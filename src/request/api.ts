@@ -1,5 +1,6 @@
 import { getUserConfig } from "../store/index";
 
+
 export const baseUrl = "https://api.coze.cn/"; // 国内地址
 
 // "pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM"; //测试的时候填一下
@@ -140,10 +141,25 @@ export const getMessageList = async (conversation_id?: string) => {
         Authorization: `Bearer ${getUserConfig().token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({}),
+      body: JSON.stringify({
+        order:"asc",
+      }),
     }
   );
   const resJson = await res.json();
   const { code, data, msg } = resJson;
   return data;
 };
+
+export const uploadFile = async (form_data) => { 
+  const res = await fetch('https://api.coze.cn/v1/files/upload', {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + getUserConfig().token,
+          },
+          body: form_data,
+        });
+  const jsonData = await res.json();
+  return jsonData; // Promise
+}
+        
