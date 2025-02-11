@@ -7,7 +7,7 @@ import "./index.less";
 const App = () => {
   return (
     <div className="container">
-      <LLMDialogBox mode={1} />
+      <LLMDialogBox mode={0} />
     </div>
   );
 };
