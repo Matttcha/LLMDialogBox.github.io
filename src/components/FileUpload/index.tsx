@@ -10,7 +10,6 @@ import { file as fileUpload } from "../../mock";
 import { IFile, IImage } from "../../type";
 import { uploadFile } from "../../request/api";
 
-
 interface IProps {
   onUploadSuccess: (
     file_name: string,
@@ -119,49 +118,48 @@ export default forwardRef((props: IProps, ref) => {
     }
 
     try {
-      setTimeout(async () => {
-        const file = e.target.files[0];
-        // console.log("file", file);
+      const file = e.target.files[0];
+      console.log("file", file);
 
-        const form_data = new FormData();
-        form_data.append("file", file);
+      const form_data = new FormData();
+      form_data.append("file", file);
 
-        // ````````
-        const jsonData = await uploadFile(form_data)
-        console.log(jsonData)
+      // ````````
+      const jsonData = await uploadFile(form_data);
+      console.log(jsonData);
 
-        // ````````
+      // ````````
 
-        // const jsonData = await fileUpload;
-        const code = jsonData.code
-        const msg = jsonData.msg
-        if (code !== 0) {
-          message.error(msg)
-          //去除filelist imagelist最后一项
-          imageType.includes(file.name.split(".").slice(-1)[0]) ? updateFileListFail("img") : updateFileListFail("file")
-          return
-        }
+      // const jsonData = await fileUpload;
+      const code = jsonData.code;
+      const msg = jsonData.msg;
+      if (code !== 0) {
+        message.error(msg);
+        //去除filelist imagelist最后一项
+        imageType.includes(file.name.split(".").slice(-1)[0])
+          ? updateFileListFail("img")
+          : updateFileListFail("file");
+        return;
+      }
 
+      let fileExtension;
+      if (typeof file.name === "string") {
+        fileExtension = file.name.split(".").slice(-1)[0];
+      }
+      let base64;
+      if (
+        ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(fileExtension)
+      ) {
+        base64 = await handleFileToBase64(file);
+      }
 
-        let fileExtension;
-        if (typeof file.name === "string") {
-          fileExtension = file.name.split(".").slice(-1)[0];
-        }
-        let base64;
-        if (
-          ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(fileExtension)
-        ) {
-          base64 = await handleFileToBase64(file);
-        }
-
-        onUploadSuccess(
-          jsonData.data.file_name,
-          jsonData.data.id,
-          base64,
-          "上传完成"
-        );
-        return jsonData;
-      }, 3000);
+      onUploadSuccess(
+        jsonData.data.file_name,
+        jsonData.data.id,
+        base64,
+        "上传完成"
+      );
+      return jsonData;
     } catch (err) {
       console.error(err);
     }

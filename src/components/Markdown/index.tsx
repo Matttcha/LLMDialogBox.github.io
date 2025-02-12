@@ -40,16 +40,25 @@ function CustomCode(props: { children: ReactNode; className?: string }) {
       {isSingleTextNode && (
         <div className="text-xs p-2 flex justify-end">
           <CopyToClipboard text={code} onCopy={() => setCopied(true)}>
-            <div className="flex flex-row items-center gap-2 cursor-pointer w-fit ml-1" style={{display:"flex",height:"25px"}}>
+            <div
+              className="flex flex-row items-center gap-2 cursor-pointer w-fit ml-1"
+              style={{ display: "flex", height: "25px" }}
+            >
               <ClipboardDocumentIcon width={20} />
-              <span style={{alignContent:"center",justifyContent:"center"}}>{copied ? "copied" : "copy code"}</span>
+              <span
+                style={{ alignContent: "center", justifyContent: "center" }}
+              >
+                {copied ? "copied" : "copy code"}
+              </span>
             </div>
           </CopyToClipboard>
         </div>
       )}
 
       {/* <div>{ props.children}</div> */}
-      <code className={props.className} style={{overflow:'hidden'}}>{props.children}</code>
+      <code className={props.className} style={{ overflow: "hidden" }}>
+        {props.children}
+      </code>
     </div>
   );
 }

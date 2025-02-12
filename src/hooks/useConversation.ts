@@ -86,7 +86,7 @@ function useConversation() {
       const contentType = res.headers.get("Content-Type");
       if (contentType?.includes("text/event-stream")) {
         // 流式
-        let result = { ...newMessages.pop(), suggestions: [] };
+        let result = { ...newMessages.slice(-1)[0], suggestions: [] };
         await handleSSEResponse(
           res,
           newMessages,
@@ -180,7 +180,7 @@ function useConversation() {
       if (message.includes("[DONE]")) {
         console.log("result", result);
         store.setMessages([
-          ..._messages,
+          ..._messages.slice(0, -1),
           {
             role: "assistant",
             text: result.text,
@@ -265,7 +265,7 @@ function useConversation() {
       if (["answer"].includes(data?.type) && !data.created_at) {
         result.text += data?.content;
         store.setMessages([
-          ..._messages,
+          ..._messages.slice(0, -1),
           { role: "assistant", text: result.text },
         ]); ///
       } else if (data?.type === "follow_up") {
