@@ -1,11 +1,12 @@
 import { create } from "zustand";
-import { IBotInfo, IMessage, IUserConfig } from "../type";
+import { IBotInfo, IMessage, IUserConfig ,ISwitchConversationMessage} from "../type";
 import { conversations, messages as messagesMock } from "../mock";
 
 type TConversation = { conversationId: string; text: string };
 
 interface IChatState {
-
+  switchConversationMessage: ISwitchConversationMessage[];
+  setSwitchConversationMessage(switchConversationMessage: ISwitchConversationMessage[]): void;
 
   userConfig: IUserConfig;
   setUserConfig(userConfig: IUserConfig): void;
@@ -33,6 +34,10 @@ interface IChatState {
  * @isLoading: 消息是否发送中
  */
 export const useChatStore = create<IChatState>((set) => ({
+  switchConversationMessage: [],
+  setSwitchConversationMessage:(switchConversationMessage:ISwitchConversationMessage[])=>set({switchConversationMessage}),
+
+
   userConfig: {
     // token:"",
       token:"pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM",

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Tooltip, Input, Button, Modal } from "antd";
+import { Tooltip, Input, Button, Modal, Skeleton, Switch } from "antd";
 import getStyleName from "../../utils/getStyleName"
 import { IconFile, IconFileImage, IconSend } from "@arco-design/web-react/icon";
 import { SearchOutlined } from '@ant-design/icons';
@@ -7,7 +7,7 @@ import FileUpload from "../FileUpload";
 import { useChatStore } from "../../store";
 import { IInput, IImage, IFile } from "../../type";
 import useConversation from "../../hooks/useConversation";
-import { LoadingOutlined, FileWordOutlined, FileTextOutlined, FileExcelOutlined, FilePdfOutlined, FilePptOutlined, CloseCircleOutlined, DeleteFilled } from '@ant-design/icons';
+import { LoadingOutlined, FileWordOutlined, FileTextOutlined, FileExcelOutlined, FilePdfOutlined, FilePptOutlined, CloseCircleOutlined, DeleteFilled, SettingOutlined } from '@ant-design/icons';
 import "./index.less";
 import { IMessage } from "../../type";
 import Markdown from "../Markdown";
@@ -34,8 +34,12 @@ const InlineDialogBox = (props: IProps) => {
     const { sendMessage } = useConversation();
     const fileUploadRef = useRef<IFileUploadRef>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isUserconfigOpen, setIsUserconfigOpen] = useState(false);
     const message = store.messages
-
+    const [currentToken, setCurrentToken] = useState<string>("");
+    const [currentBotId, setCurrentBotId] = useState<string>("");
+    const [currentUserName, setCurrentUserName] = useState<string>("");
+    const [currentStream, setCurrentStream] = useState<boolean>(false);
 
     // console.log('message', message)
     // console.log('role',role)
@@ -96,11 +100,16 @@ const InlineDialogBox = (props: IProps) => {
         setIsModalOpen(true);
     };
 
+    const showUserconfig = () => {
+        setIsUserconfigOpen(true);
+    }
+
+
     const handleCancel = () => {
         setIsModalOpen(false);
     };
     const suffix = (
-        <Button  icon={<SearchOutlined />} style={{border:"none"}} onClick={showModal}/>
+        <Button icon={<SearchOutlined />} style={{ border: "none" }} onClick={showModal} />
     );
 
     const messagesRef = useRef<HTMLDivElement>(null);
@@ -110,6 +119,29 @@ const InlineDialogBox = (props: IProps) => {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
     }, [message]);
+    const onUserConfigSave = () => {
+        store.setUserConfig({
+            token: currentToken,
+            botId: currentBotId,
+            userName: currentUserName,
+            stream: currentStream,
+        });
+        //关闭
+        setIsUserconfigOpen(false);
+    };
+    const onTokenChange = (e) => {
+        setCurrentToken(e.target.value);
+    };
+    const onBotIdChange = (e) => {
+        setCurrentBotId(e.target.value);
+    };
+    const onUserNameChange = (e) => {
+        setCurrentUserName(e.target.value);
+    };
+    const onStreamChange = (value) => {
+        setCurrentStream(value);
+    };
+
     return (
         <>
             <div className={style("")}>
@@ -126,7 +158,7 @@ const InlineDialogBox = (props: IProps) => {
                         <Input
                             className={style("textarea-input")}
                             placeholder="Enter something"
-                            style={{ height: 50, width: 580 }}
+                            style={{ height: 50, width: 580 ,  marginBottom : "7px"}}
                             value={input}
                             onChange={(e) => {
                                 setInput(e.target.value);
@@ -220,6 +252,58 @@ const InlineDialogBox = (props: IProps) => {
                                 ))
                             }
                         </div>}
+                    <Button type="primary" shape="circle" icon={<SettingOutlined />} onClick={() => {
+                        showUserconfig;
+                        setCurrentToken(store.userConfig.token || "");
+                        setCurrentBotId(store.userConfig.botId || "");
+                        setCurrentUserName(store.userConfig.userName || "");
+                        setCurrentStream(store.userConfig.stream || false);
+                        setIsUserconfigOpen(true);
+                    }}>
+                    </Button>
+                    <Modal open={isUserconfigOpen} onOk={onUserConfigSave}
+                        onCancel={() => {
+                            setIsUserconfigOpen(false);
+                        }}
+                        okText="Save">
+                        <div>
+                            Token
+                            <Input
+                                value={currentToken}
+                                placeholder="请输入您的 Coze Token"
+                                className="token-botId"
+                                onChange={onTokenChange}
+                            />
+                        </div>
+                        <div>
+                            BotId
+                            <Input
+                                value={currentBotId}
+                                placeholder="请输入您的 BotId"
+                                className="token-botId"
+                                onChange={onBotIdChange}
+                            />
+                        </div>
+                        <div>
+                            用户名
+                            <Input
+                                value={currentUserName}
+                                placeholder="请输入您的用户名"
+                                className="token-botId"
+                                onChange={onUserNameChange}
+                            />
+                        </div>
+                        <div>
+                            流式响应
+                            <Switch
+                                checked={currentStream}
+                                defaultChecked
+                                className="switchStream"
+                                onChange={onStreamChange}
+                            />
+                        </div>
+                    </Modal>
+
                 </Modal>
             </div>
 

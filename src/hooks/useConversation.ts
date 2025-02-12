@@ -187,6 +187,51 @@ function useConversation() {
             suggestions: result.suggestions,
           },
         ]);
+        //// 
+
+        console.log("this is store.currentconversationid", result.conversation_id)
+        const foundObject = store.switchConversationMessage.find(obj => obj.conversationId === result.conversation_id);
+        if (!foundObject) {
+          store.setSwitchConversationMessage([...store.switchConversationMessage, {
+            conversationId: result.conversation_id, message: [
+              ..._messages,
+              {
+                role: "assistant",
+                text: result.text,
+                suggestions: result.suggestions,
+              },
+            ]
+          }])
+        } else {
+          let newArr = store.switchConversationMessage.filter(function (item) {
+            return item !== foundObject;
+          });
+          // store.setSwitchConversationMessage(newArr) //
+          store.setSwitchConversationMessage([...store.switchConversationMessage, {
+            conversationId: result.conversation_id, message: [
+              ..._messages,
+              {
+                role: "assistant",
+                text: result.text,
+                suggestions: result.suggestions, // 
+              },
+            ]
+          }])
+
+          console.log('setSwitchConversationMessage', [...store.switchConversationMessage, {
+            conversationId: result.conversation_id, message: [
+              ..._messages,
+              {
+                role: "assistant",
+                text: result.text,
+                suggestions: result.suggestions, // 
+              },
+            ]
+          }])
+        }
+
+        /// 
+
         return;
       }
       let data;
@@ -205,7 +250,6 @@ function useConversation() {
         //   ]);
         //   store.setCurrentConversation(chat_id); // 设置新获取到的chat_id
         // }
-
         // conversation_id
         const { conversation_id } = data;
         if (conversation_id && conversation_id !== store.currentConversation) {
@@ -214,6 +258,7 @@ function useConversation() {
             ...store.conversations,
           ]);
           store.setCurrentConversation(conversation_id); // 设置新获取到的chat_id
+          result.conversation_id = conversation_id
         }
       }
 

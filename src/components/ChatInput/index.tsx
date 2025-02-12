@@ -17,6 +17,7 @@ interface IProps {}
 
 interface IFileUploadRef {
   click: () => {};
+  setPassedParam(param): () => {};
 }
 
 /**
@@ -30,6 +31,7 @@ const ChatInput = (props: IProps) => {
   const [fileList, setFileList] = useState<IFile[]>([]);
   const { sendMessage } = useConversation();
   const fileUploadRef = useRef<IFileUploadRef>(null);
+  const [accept,setAccept]=useState<string>('')
 
   // 当前对话切换时，清空文本框、图片列表、文件列表
   useEffect(() => {
@@ -137,6 +139,7 @@ const ChatInput = (props: IProps) => {
           <div
             className={style("btns-btn")}
             onClick={() => {
+              setAccept(".doc,.docs,.pdf")
               fileUploadRef.current?.click();
             }}
           >
@@ -147,6 +150,7 @@ const ChatInput = (props: IProps) => {
           <div
             className={style("btns-btn")}
             onClick={() => {
+              setAccept(".png,.jpg")
               fileUploadRef.current?.click();
             }}
           >
@@ -182,7 +186,7 @@ const ChatInput = (props: IProps) => {
           </div>
         </div>
       </div>
-      <FileUpload ref={fileUploadRef} onUploadSuccess={onUploadSuccess} updateFileList={updateFileList} updateFileListFail={updateFileListFail} />
+      <FileUpload accept={accept} ref={fileUploadRef} onUploadSuccess={onUploadSuccess} updateFileList={updateFileList} updateFileListFail={updateFileListFail} />
     </>
   );
 };

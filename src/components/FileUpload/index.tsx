@@ -20,13 +20,16 @@ interface IProps {
   ) => void;
   updateFileList: (type: string, file: IFile | IImage) => void;
   updateFileListFail: (type: string) => void;
+  accept: string;
 }
 
 export default forwardRef((props: IProps, ref) => {
-  const { onUploadSuccess, updateFileList, updateFileListFail } = props;
+  const { onUploadSuccess, updateFileList, updateFileListFail, accept } = props;
   const fileInputRef = useRef<any>("");
   const [fileName, setFileName] = useState<string>("");
-
+  const [passedParam, setPassedParam] = useState<string | undefined>("");
+  console.log('accept',accept)
+  
   useImperativeHandle(ref, () => {
     // 把自己内部的方法暴露给调用自己的父组件去使用
     return {
@@ -35,8 +38,10 @@ export default forwardRef((props: IProps, ref) => {
   });
 
   const onClickUpload = () => {
+    console.log(123)
     fileInputRef.current.value = "";
     fileInputRef.current.click();
+    
   };
 
   const handleFileToBase64 = async (file: File) => {
@@ -61,7 +66,7 @@ export default forwardRef((props: IProps, ref) => {
     if (e.target.files[0].size > 536870912) {
       return;
     } //文件大小要小于512MB
-
+    console.log(e)
     const fileType = [
       "doc",
       "docx",
@@ -90,7 +95,10 @@ export default forwardRef((props: IProps, ref) => {
     }
     const file = e.target.files[0];
     const imageType = ["jpg", "jpg2", "png", "gif"];
+    // let fileInput = document.getElementById('fileInput');
+
     if (imageType.includes(file.name.split(".").slice(-1)[0])) {
+      // fileInput ? fileInput.accept = 'image/*' : null;
       setFileName(file.name);
       const newFile: IImage = {
         file_name: file.name,
@@ -100,6 +108,7 @@ export default forwardRef((props: IProps, ref) => {
       };
       updateFileList("img", newFile);
     } else {
+      // fileInput ? fileInput.accept = '.doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.numbers,.csv' : null;
       setFileName(file.name);
       const newFile = {
         file_name: file.name,
@@ -129,7 +138,7 @@ export default forwardRef((props: IProps, ref) => {
         if (code !== 0) {
           message.error(msg)
           //去除filelist imagelist最后一项
-          imageType.includes(file.name.split(".").slice(-1)[0])?updateFileListFail("img"):updateFileListFail("file")
+          imageType.includes(file.name.split(".").slice(-1)[0]) ? updateFileListFail("img") : updateFileListFail("file")
           return
         }
 
@@ -150,7 +159,7 @@ export default forwardRef((props: IProps, ref) => {
           jsonData.data.id,
           base64,
           "上传完成"
-        ); 
+        );
         return jsonData;
       }, 3000);
     } catch (err) {
@@ -164,6 +173,8 @@ export default forwardRef((props: IProps, ref) => {
       ref={fileInputRef}
       style={{ display: "none" }}
       onChange={handleFileChange}
-    ></input>
+      accept={accept}
+      // id="fileInput"
+      ></input>
   );
 });

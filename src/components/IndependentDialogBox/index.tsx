@@ -4,14 +4,14 @@ import getStyleName from "../../utils/getStyleName";
 import OriginalChat from "../OriginalChat";
 import ChatRecordBox from "../ChatRecordBox";
 import ChatInput from "../ChatInput";
-import { IconDoubleLeft, IconSettings } from "@arco-design/web-react/icon";
+import { IconDoubleLeft, IconSettings ,IconDoubleRight} from "@arco-design/web-react/icon";
 import { useChatStore } from "../../store";
-import { Modal, Input, Switch } from "antd";
-import {getMessageList}from "../../request/api"
-
+import { Modal, Input, Switch, Button, Drawer, Radio, Space } from "antd";
+import { getMessageList } from "../../request/api"
+import Icon, { PlusCircleOutlined, PlusOutlined  } from '@ant-design/icons';
 const style = getStyleName("independent-dialog-box");
 
-interface IProps {}
+interface IProps { }
 
 /**
  * 独立对话框组件
@@ -24,6 +24,7 @@ const IndependentDialogBox = (props: IProps) => {
   const [currentBotId, setCurrentBotId] = useState<string>("");
   const [currentUserName, setCurrentUserName] = useState<string>("");
   const [currentStream, setCurrentStream] = useState<boolean>(false);
+  const [open, setOpen] = useState(false);
 
   const onTokenChange = (e) => {
     setCurrentToken(e.target.value);
@@ -48,23 +49,47 @@ const IndependentDialogBox = (props: IProps) => {
     setIsModalOpen(false);
   };
 
-  const onCLickHistoryChat =async (item) => {
+  const onCLickHistoryChat = async (item) => {
     if (store.currentConversation !== item.conversationId) {
       store.setCurrentConversation(item.conversationId);
       store.setSwitchConversation(true);
-      const dataSwitchConversation = await getMessageList(item.conversationId)
+      const foundObject = store.switchConversationMessage.find(obj => obj.conversationId === item.conversationId);
+      console.log('store.switchConversationMessage', store.switchConversationMessage)
+      console.log('item.conversationId', item.conversationId)
+      console.log('foundObject', foundObject)
+      if (foundObject) {
+        const text = foundObject.message;
+        store.setMessages([...text])
+          // console.log(text); // 输出: bbbbb
+      }
+      // else {
+      //   const dataSwitchConversation = await getMessageList(item.conversationId)
+      //   const filteredData = dataSwitchConversation.map(item => ({
+      //   role: item.role,
+      //   text: item.role === 'assistant' ? item.content : JSON.parse(item.content)[0].text,
+      // }));
+      // store.setMessages([...filteredData])
+      // // console.log('new',{ conversationId: item.conversationId, message: [ ...filteredData ] })
+      // store.setSwitchConversationMessage([...store.switchConversationMessage, { conversationId: item.conversationId, message: [ ...filteredData ] }])
+
+      // }
+      
       // console.log(dataSwitchConversation)
-      const filteredData = dataSwitchConversation.map(item => ({
-        role: item.role,
-        text: item.role==='assistant'?item.content:JSON.parse(item.content)[0].text,
-      }));
-      store.setMessages([...filteredData])
+            // console.log(store.switchConversationMessage)
     }
+  };
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
   };
 
   return (
     <div className={style("")}>
-      <div className={style("left")}>
+      
+      {open&&<div className={style("left")}>
         <div className={style("left-title")}>
           <div className={style("left-title-icon")}>🐈</div>
           <div className={style("left-title-erc")}>邪恶布偶猫</div>
@@ -85,11 +110,10 @@ const IndependentDialogBox = (props: IProps) => {
           {store.conversations.map((item) => (
             <div
               key={item.conversationId}
-              className={`${style("left-list-item")} ${
-                item.conversationId === store.currentConversation
-                  ? style("left-list-item-active")
-                  : ""
-              }`}
+              className={`${style("left-list-item")} ${item.conversationId === store.currentConversation
+                ? style("left-list-item-active")
+                : ""
+                }`}
               onClick={() => {
                 onCLickHistoryChat(item);
               }}
@@ -114,11 +138,37 @@ const IndependentDialogBox = (props: IProps) => {
           >
             设置
           </div>
-          <div className={style("left-settings-icon")}>
+          <div className={style("left-settings-icon")} onClick={onClose}>
             <IconDoubleLeft />
           </div>
         </div>
-      </div>
+      </div>}
+      
+
+      {open || <div className={style("left-contract")}>
+        <div className={style("left-contract-newConversationBtn")}>
+          <Button className={style("left-contract-newConversationBtn-btn")} onClick={() => {
+            if (store.currentConversation) {
+              store.setCurrentConversation("");
+              store.setMessages([]);
+            }
+          }}>
+            <div className={style("left-contract-newConversationBtn-btn-plus")}>
+                <PlusOutlined />
+            </div>
+            
+          </Button>
+        </div>
+        <div className={style("left-contract-settings-icon")} onClick={() => {
+          setOpen(true);
+          }}>
+          <IconDoubleRight />
+        </div>
+      </div>}
+
+
+
+
       <div className={style("right")}>
         {!store.currentConversation ? <OriginalChat /> : <ChatRecordBox />}
         <ChatInput />

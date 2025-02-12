@@ -33,7 +33,7 @@ const Message = (props: IProps) => {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
     }, [message]); 
-  
+ 
   return (
     <div className={style("")}>
       {/* 头像 */}
@@ -50,7 +50,7 @@ const Message = (props: IProps) => {
           className={`${style("content")} ${
             role === "assistant" ? style("content-assistant") : style("content-user")
             }`}
-          ref={messagesRef}
+          
         >
           <Skeleton
             active
