@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import "./index.less";
 import getStyleName from "../../utils/getStyleName";
-import { Tooltip, Input, Button } from "antd";
+import { Tooltip, Input, Button, message } from "antd";
 import FileUpload from "../FileUpload";
 
 const { TextArea } = Input;
@@ -100,7 +100,6 @@ const ChatInput = (props: IProps) => {
       setImageList([...(imageList as IImage[]), file as IImage]);
     } else if (type === "file") {
       setFileList([...(fileList as IFile[]), file as IFile]);
-      console.log(5);
     }
   };
   const updateFileListFail = (type: string) => {

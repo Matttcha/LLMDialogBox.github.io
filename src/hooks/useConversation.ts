@@ -5,6 +5,7 @@ import { IContent, IInput, IMessage } from "../type";
 import { assistantReply2 } from "../mock";
 import { isEmpty } from "lodash-es";
 import { createParser } from "eventsource-parser";
+import { message } from "antd";
 
 const statusTextMap = new Map([
   [400, "Bad Request"],
@@ -83,6 +84,25 @@ function useConversation() {
         content_type,
         conversationId
       );
+
+      const resJson = await res.json();
+      const { code, msg } = resJson;
+
+      // 错误处理
+      if (code !== 0) {
+        message.error(msg);
+        if (!conversationId) {
+          // 如果是开启一个新对话，此时清除刚才在messages中新增的消息
+          store.setMessages([]);
+        } else {
+          // 如果是接着之前的对话继续发消息，则把智能体的回答改成报错信息
+          newMessages[newMessages.length - 1].text = msg;
+          store.setMessages(newMessages);
+        }
+
+        store.setIsLoading(false);
+        return;
+      }
       const contentType = res.headers.get("Content-Type");
       if (contentType?.includes("text/event-stream")) {
         // 流式
@@ -96,13 +116,9 @@ function useConversation() {
         );
       } else {
         // 非流式
-        const resJson = await res.json();
         const {
-          code,
           data: { id: chat_id, conversation_id },
-          msg,
         } = resJson;
-
         if (!conversationId) {
           // 如果为空，表示此时是开启一个新对话
           // 1.用从接口获取到的 conversation_id 和 用户的第一条消息文本更新conversations，从而更新左侧历史会话列表
@@ -132,7 +148,7 @@ function useConversation() {
 
         // 未完成：更新缓存
       }
-    } catch {
+    } catch (e) {
     } finally {
       store.setIsLoading(false);
     }
@@ -182,7 +198,6 @@ function useConversation() {
   ) => {
     await parseSSEResponse(res, (message) => {
       if (message.includes("[DONE]")) {
-        console.log("result", result);
         store.setMessages([
           ..._messages.slice(0, -1),
           {
@@ -191,12 +206,6 @@ function useConversation() {
             suggestions: result.suggestions,
           },
         ]);
-        ////
-
-        console.log(
-          "this is store.currentconversationid",
-          result.conversation_id
-        );
         const foundObject = store.switchConversationMessage.find(
           (obj) => obj.conversationId === result.conversation_id
         );
@@ -234,24 +243,7 @@ function useConversation() {
               ],
             },
           ]);
-
-          console.log("setSwitchConversationMessage", [
-            ...store.switchConversationMessage,
-            {
-              conversationId: result.conversation_id,
-              message: [
-                ..._messages,
-                {
-                  role: "assistant",
-                  text: result.text,
-                  suggestions: result.suggestions, //
-                },
-              ],
-            },
-          ]);
         }
-
-        ///
 
         return;
       }
@@ -281,7 +273,6 @@ function useConversation() {
           { role: "assistant", text: result.text },
         ]); ///
       } else if (data?.type === "follow_up") {
-        console.log(data.content);
         result.suggestions?.push(data.content);
       } else if (data?.status == "failed") {
         throw new Error(data.last_error!.msg);

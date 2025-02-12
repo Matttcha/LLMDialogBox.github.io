@@ -128,19 +128,17 @@ const IndependentDialogBox = (props: IProps) => {
               </div>
             ))}
           </div>
-          <div className={style("left-settings")} onClick={onModalOpen}>
-            <div className={style("left-settings-setting")}>
+          <div className={style("left-settings")}>
+            <div
+              className={style("left-settings-setting")}
+              onClick={onModalOpen}
+            >
               <div className={style("left-settings-setting-icon")}>
                 <SettingOutlined />
               </div>
               <div className={style("left-settings-setting-text")}>设置</div>
             </div>
-            <div
-              className={style("left-settings-icon")}
-              onClick={() => {
-                setIsHistoryContract(true);
-              }}
-            >
+            <div className={style("left-settings-icon")}>
               <Button
                 variant="text"
                 icon={<DoubleLeftOutlined />}
