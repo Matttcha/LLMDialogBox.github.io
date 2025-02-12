@@ -258,7 +258,7 @@ function useConversation() {
             {
               conversationId: result.conversation_id,
               message: [
-                ..._messages,
+                ..._messages.slice(0, -1),
                 {
                   role: "assistant",
                   text: result.text,
@@ -277,7 +277,7 @@ function useConversation() {
             {
               conversationId: result.conversation_id,
               message: [
-                ..._messages,
+                ..._messages.slice(0, -1),
                 {
                   role: "assistant",
                   text: result.text,
@@ -326,7 +326,6 @@ function useConversation() {
           ]);
           store.setCurrentConversation(conversation_id); // 设置新获取到的chat_id
           result.conversation_id = conversation_id;
-          console.log(conversation_id, "CurrentConversation");
         }
       } else {
         const { conversation_id } = data;
