@@ -1,13 +1,19 @@
 import { create } from "zustand";
-import { IBotInfo, IMessage, IUserConfig ,ISwitchConversationMessage} from "../type";
+import {
+  IBotInfo,
+  IMessage,
+  IUserConfig,
+  ISwitchConversationMessage,
+} from "../type";
 import { conversations, messages as messagesMock } from "../mock";
 
 type TConversation = { conversationId: string; text: string };
 
 interface IChatState {
   switchConversationMessage: ISwitchConversationMessage[];
-  setSwitchConversationMessage(switchConversationMessage: ISwitchConversationMessage[]): void;
-
+  setSwitchConversationMessage(
+    switchConversationMessage: ISwitchConversationMessage[]
+  ): void;
   userConfig: IUserConfig;
   setUserConfig(userConfig: IUserConfig): void;
   botInfo: IBotInfo;
@@ -22,10 +28,14 @@ interface IChatState {
   setMessages(messages: IMessage[]): void;
   isLoading: boolean;
   setIsLoading(isLoading: boolean): void;
+  isFileUploading: boolean;
+  setIsFileUploading(isLoading: boolean): void;
 }
 
 /**
  * 对话框状态管理仓库
+ * @switchConversationMessage: 历史对话缓存
+ * @userConfig: 用户配置
  * @botInfo: 智能体信息
  * @currentConversation: 当前会话的id
  * @conversations: 历史会话列表
@@ -35,12 +45,14 @@ interface IChatState {
  */
 export const useChatStore = create<IChatState>((set) => ({
   switchConversationMessage: [],
-  setSwitchConversationMessage:(switchConversationMessage:ISwitchConversationMessage[])=>set({switchConversationMessage}),
-
+  setSwitchConversationMessage: (
+    switchConversationMessage: ISwitchConversationMessage[]
+  ) => set({ switchConversationMessage }),
 
   userConfig: {
-    // token:"",
-      token:"pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM",
+    // token: "",
+    token:
+      "pat_oyuR51Ie39pEnzHEbovqoM1hDFp7y8Nu1U9In5AHL1rUQHn3O7KO724CzFGGf4TM",
     botId: "7460125530122190900",
     // botId: "",
     userName: "evilragdollcat",
@@ -66,7 +78,10 @@ export const useChatStore = create<IChatState>((set) => ({
   messages: [], // messagesMock as IMessage[],
   setMessages: (messages: IMessage[]) => set({ messages }),
   isLoading: false,
+  setIsloading: (isLoading: boolean) => set({ isLoading }),
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
+  isFileUploading: false,
+  setIsFileUploading: (isFileUploading: boolean) => set({ isFileUploading }),
 }));
 
 export const getUserConfig = () => useChatStore.getState().userConfig;

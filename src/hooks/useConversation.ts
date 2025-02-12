@@ -77,7 +77,7 @@ function useConversation() {
     // 如果是新对话,把会话id和第一个问题文本一起存入store.conversations，同时更新store.currentConversation
     // 分情况写逻辑，如果是流式响应，直接处理结果；如果是非流式，用获取到的会话id和对话id作为查询参数，轮询“查看对话详情”接口，得到完成的结果后再调用“查看对话消息详情”接口，获取消息详情
     try {
-      const { contentArr, content_type } = buildContentArr(input);
+      const { contentArr, content_type } = buildContentArr(input); // 将输入信息转换成接口所需的格式
       const res = await getChat(
         JSON.stringify(contentArr),
         content_type,
@@ -104,7 +104,9 @@ function useConversation() {
         } = resJson;
 
         if (!conversationId) {
-          //没有conversationId
+          // 如果为空，表示此时是开启一个新对话
+          // 1.用从接口获取到的 conversation_id 和 用户的第一条消息文本更新conversations，从而更新左侧历史会话列表
+          // 2.将此时从接口获取到的 conversation_id 赋给 currentConversation
           store.setConversations([
             { conversationId: conversation_id, text: input.text },
             ...store.conversations,
@@ -113,7 +115,7 @@ function useConversation() {
         }
 
         // 用 chat_id 和 conversation_id 进行轮询，轮询结束后获得对话消息详情
-        const data = await asyncChatRetrieve(chat_id, conversation_id); // 暂时注视
+        const data = await asyncChatRetrieve(chat_id, conversation_id);
         // const data = await assistantReply; // mock
         const answer = data.find((item) => item.type === "answer")?.content;
         const follow_up = data
@@ -127,6 +129,8 @@ function useConversation() {
             suggestions: follow_up,
           },
         ]);
+
+        // 未完成：更新缓存
       }
     } catch {
     } finally {
@@ -187,50 +191,67 @@ function useConversation() {
             suggestions: result.suggestions,
           },
         ]);
-        //// 
+        ////
 
-        console.log("this is store.currentconversationid", result.conversation_id)
-        const foundObject = store.switchConversationMessage.find(obj => obj.conversationId === result.conversation_id);
+        console.log(
+          "this is store.currentconversationid",
+          result.conversation_id
+        );
+        const foundObject = store.switchConversationMessage.find(
+          (obj) => obj.conversationId === result.conversation_id
+        );
         if (!foundObject) {
-          store.setSwitchConversationMessage([...store.switchConversationMessage, {
-            conversationId: result.conversation_id, message: [
-              ..._messages,
-              {
-                role: "assistant",
-                text: result.text,
-                suggestions: result.suggestions,
-              },
-            ]
-          }])
+          store.setSwitchConversationMessage([
+            ...store.switchConversationMessage,
+            {
+              conversationId: result.conversation_id,
+              message: [
+                ..._messages,
+                {
+                  role: "assistant",
+                  text: result.text,
+                  suggestions: result.suggestions,
+                },
+              ],
+            },
+          ]);
         } else {
           let newArr = store.switchConversationMessage.filter(function (item) {
             return item !== foundObject;
           });
           // store.setSwitchConversationMessage(newArr) //
-          store.setSwitchConversationMessage([...store.switchConversationMessage, {
-            conversationId: result.conversation_id, message: [
-              ..._messages,
-              {
-                role: "assistant",
-                text: result.text,
-                suggestions: result.suggestions, // 
-              },
-            ]
-          }])
+          store.setSwitchConversationMessage([
+            ...store.switchConversationMessage,
+            {
+              conversationId: result.conversation_id,
+              message: [
+                ..._messages,
+                {
+                  role: "assistant",
+                  text: result.text,
+                  suggestions: result.suggestions, //
+                },
+              ],
+            },
+          ]);
 
-          console.log('setSwitchConversationMessage', [...store.switchConversationMessage, {
-            conversationId: result.conversation_id, message: [
-              ..._messages,
-              {
-                role: "assistant",
-                text: result.text,
-                suggestions: result.suggestions, // 
-              },
-            ]
-          }])
+          console.log("setSwitchConversationMessage", [
+            ...store.switchConversationMessage,
+            {
+              conversationId: result.conversation_id,
+              message: [
+                ..._messages,
+                {
+                  role: "assistant",
+                  text: result.text,
+                  suggestions: result.suggestions, //
+                },
+              ],
+            },
+          ]);
         }
 
-        /// 
+        ///
 
         return;
       }
@@ -242,15 +263,6 @@ function useConversation() {
       }
 
       if (!conversationId) {
-        // const { chat_id } = data;
-        // if (chat_id && chat_id !== store.currentConversation) {
-        //   store.setConversations([
-        //     { conversationId: chat_id, text },
-        //     ...store.conversations,
-        //   ]);
-        //   store.setCurrentConversation(chat_id); // 设置新获取到的chat_id
-        // }
-        // conversation_id
         const { conversation_id } = data;
         if (conversation_id && conversation_id !== store.currentConversation) {
           store.setConversations([
@@ -258,7 +270,7 @@ function useConversation() {
             ...store.conversations,
           ]);
           store.setCurrentConversation(conversation_id); // 设置新获取到的chat_id
-          result.conversation_id = conversation_id
+          result.conversation_id = conversation_id;
         }
       }
 
@@ -285,7 +297,6 @@ function useConversation() {
       }
       const statusText =
         resp.statusText || statusTextMap.get(resp.status) || "";
-      console.log(`${resp.status} ${statusText}`);
     }
 
     // 创建一个SSE事件解析器。参数：通常包括一个回调函数，用于处理解析到的事件
@@ -293,7 +304,6 @@ function useConversation() {
       // 使用自定义解析器（通过 createParser 创建）解析SSE事件和数据
       onEvent: (event) => {
         if (event.data) {
-          // console.log("Event data:", event.data);
           onMessage(event.data);
         }
       },

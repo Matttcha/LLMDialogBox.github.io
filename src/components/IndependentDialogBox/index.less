@@ -1,6 +1,6 @@
 @prefix: "erc";
 @componentPrefix: ~"@{prefix}-independent-dialog-box";
-body{
+body {
   margin: 0px;
 }
 .@{componentPrefix} {
@@ -10,52 +10,15 @@ body{
   &-left {
     position: relative;
     width: 250px;
-    // height: 100%;
-    // border-right: 2px solid #fff;
     padding: 10px;
     box-sizing: border-box;
     background-color: rgb(235, 239, 250);
-      //  background: linear-gradient(
-      //   338deg,
-      //   hsla(0, 0%, 100%, 0) 62.64%,
-      //   rgba(255, 249, 234, 0.3) 95.74%
-      // ),
-      // linear-gradient(180deg, #e0e5f7, #dce2f7 32.43%, #dfeafd 99.9%);
-    &-contract{
-      width: 45px;
-      background-color: rgb(235, 239, 250);
-      position: relative;
-      // background: linear-gradient(
-      //   338deg,
-      //   hsla(0, 0%, 100%, 0) 62.64%,
-      //   rgba(255, 249, 234, 0.3) 95.74%
-      // ),
-      // linear-gradient(180deg, #e0e5f7, #dce2f7 32.43%, #dfeafd 99.9%);
-      &-newConversationBtn{
-        &-btn{
-          margin-left: -6px;
-          margin-top: 10px;
-          font-size: 20px;
-          border: 0px;
-          background-color: rgb(235, 239, 250);
-          box-shadow: none;
-         &-plus{
-          width: 28px;
-          height: 28px;
-          background-color: #3c70ff;
-          border-radius: 14px;
-         }
-        }
-      }
-      &-settings-icon{
-        position: absolute;
-        bottom: 10px;
-        width: 20px;
-        height: 20px;
-        margin-right: 5px;
-        margin-left: 8px;
-      }
-    }
+    //  background: linear-gradient(
+    //   338deg,
+    //   hsla(0, 0%, 100%, 0) 62.64%,
+    //   rgba(255, 249, 234, 0.3) 95.74%
+    // ),
+    // linear-gradient(180deg, #e0e5f7, #dce2f7 32.43%, #dfeafd 99.9%);
     &-title {
       display: flex;
       align-items: center;
@@ -105,16 +68,16 @@ body{
         font-size: 14px;
         color: #676c90;
         white-space: nowrap;
-            /* 禁止文本换行 */
+        /* 禁止文本换行 */
         overflow: hidden;
-            /* 隐藏溢出内容 */
+        /* 隐藏溢出内容 */
         text-overflow: ellipsis;
       }
       &-item-active {
         white-space: nowrap;
-            /* 禁止文本换行 */
+        /* 禁止文本换行 */
         overflow: hidden;
-            /* 隐藏溢出内容 */
+        /* 隐藏溢出内容 */
         text-overflow: ellipsis;
         background: rgba(73, 85, 245, 0.07);
       }
@@ -126,15 +89,20 @@ body{
       position: absolute;
       bottom: 10px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      &-setting-icon {
-        width: 20px;
-        height: 20px;
-        margin-right: 5px;
-      }
-      &-setting-text {
-        // color: #676c90;
-        font-size: 15px;
+      &-setting {
+        display: flex;
+        width: 60px;
+        &-icon {
+          width: 20px;
+          height: 20px;
+          margin-right: 5px;
+        }
+        &-text {
+          // color: #676c90;
+          font-size: 15px;
+        }
       }
       &-icon {
         width: 20px;
@@ -144,6 +112,17 @@ body{
       }
     }
   }
+
+  &-left-contract {
+    width: 45px;
+    background-color: rgb(235, 239, 250);
+    position: relative;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
   &-right {
     position: relative;
     width: 100%;
@@ -152,7 +131,7 @@ body{
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(180deg,rgb(244,246,252), #ebf1f7);
+    background: linear-gradient(180deg, rgb(244, 246, 252), #ebf1f7);
 
     padding: 30px 0;
     box-sizing: border-box;
@@ -165,10 +144,10 @@ body{
 .switchStream {
   margin-left: 10px;
 }
-.ant-drawer-content .ant-drawer-body{
+.ant-drawer-content .ant-drawer-body {
   padding: 0px;
 }
-.anticon-plus{
+.anticon-plus {
   color: #fff;
   // background-color: #3f5aff;
   // border-radius: 15px;
