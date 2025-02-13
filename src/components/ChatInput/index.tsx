@@ -179,8 +179,8 @@ const ChatInput = (props: IProps) => {
         <div className={style("btns")}>
           <div
             className={style("btns-btn")}
-            onClick={() => {
-              setAccept(".doc,.docs,.pdf");
+            onClick={async () => {
+              await setAccept(".doc,.docs,.pdf");
               fileUploadRef.current?.click();
             }}
           >
@@ -190,8 +190,8 @@ const ChatInput = (props: IProps) => {
           </div>
           <div
             className={style("btns-btn")}
-            onClick={() => {
-              setAccept(".png,.jpg");
+            onClick={async () => {
+              await setAccept(".png,.jpg");
               fileUploadRef.current?.click();
             }}
           >

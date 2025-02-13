@@ -18,6 +18,10 @@ function useConversation() {
   const store = useChatStore();
 
   const sendMessage = async (input: IInput) => {
+    if (store.isLoading) {
+      message.error("还有进行中的对话，请稍后再试");
+      return;
+    }
     // 在接口数据返回前插入两条正在处理中的问答
     const newMessages = [
       ...store.messages,
@@ -34,7 +38,7 @@ function useConversation() {
     ] as IMessage[];
     store.setMessages(newMessages);
     // 发送消息不需要重新请求历史消息列表，否则历史消息列表会覆盖messages
-    store.switchConversation && store.setSwitchConversation(false);
+    // store.switchConversation && store.setSwitchConversation(false);
     store.setIsLoading(true);
     await handleSend(input, newMessages);
 
@@ -97,30 +101,44 @@ function useConversation() {
           input.text
         );
       } else {
-        // 非流式
+        // 非流式（注意：如果流式响应接口报错，此时也会走这个逻辑！）
         const resJson = await res.json();
+        // // 错误处理
+        const { code, msg } = resJson;
+        if (code !== 0) {
+          message.error(msg);
+          if (!conversationId) {
+            // 如果是开启一个新对话，此时清除刚才在messages中新增的消息
+            store.setMessages([]);
+          } else {
+            // 如果是接着之前的对话继续发消息，则把智能体的回答改成报错信息
+            newMessages[newMessages.length - 1].text = msg;
+            store.setMessages(newMessages);
+            // 更新缓存
+            const foundObject = store.switchConversationMessage.find(
+              (obj) => obj.conversationId === store.currentConversation
+            );
+            const newArr = store.switchConversationMessage.filter(
+              (item) => item.conversationId !== foundObject?.conversationId
+            );
+
+            const updatedMessages = [
+              ...newArr, // 使用已经过滤后的新数组
+              {
+                conversationId: store.currentConversation,
+                message: newMessages,
+              },
+            ];
+
+            store.setSwitchConversationMessage(updatedMessages);
+          }
+
+          store.setIsLoading(false);
+          return;
+        }
         const {
           data: { id: chat_id, conversation_id },
         } = resJson;
-
-        // // 错误处理
-        // const { code, msg } = resJson;
-        // console.log(resJson);
-        // if (code !== 0) {
-        //   message.error(msg);
-        //   if (!conversationId) {
-        //     // 如果是开启一个新对话，此时清除刚才在messages中新增的消息
-        //     store.setMessages([]);
-        //   } else {
-        //     // 如果是接着之前的对话继续发消息，则把智能体的回答改成报错信息
-        //     newMessages[newMessages.length - 1].text = msg;
-        //     console.log(newMessages, "newMessages");
-        //     store.setMessages(newMessages);
-        //   }
-
-        //   store.setIsLoading(false);
-        //   return;
-        // }
 
         if (!conversationId) {
           // 如果为空，表示此时是开启一个新对话
@@ -149,6 +167,7 @@ function useConversation() {
           },
         ]);
 
+        // 更新缓存
         const foundObject = store.switchConversationMessage.find(
           (obj) => obj.conversationId === conversation_id
         );
@@ -238,7 +257,6 @@ function useConversation() {
     conversationId,
     text
   ) => {
-    console.log(res, _messages, result, conversationId, text);
     await parseSSEResponse(res, (message) => {
       if (message.includes("[DONE]")) {
         store.setMessages([

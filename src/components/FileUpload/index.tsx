@@ -51,7 +51,6 @@ export default forwardRef((props: IProps, ref) => {
   const { onUploadSuccess, updateFileList, updateFileListFail, accept } = props;
   const fileInputRef = useRef<any>("");
   const [fileName, setFileName] = useState<string>("");
-  console.log("accept", accept);
 
   useImperativeHandle(ref, () => {
     // 把自己内部的方法暴露给调用自己的父组件去使用

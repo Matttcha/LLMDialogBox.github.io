@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import "./index.less";
 import getStyleName from "../../utils/getStyleName";
 import { useChatStore } from "../../store";
@@ -14,26 +14,25 @@ interface IProps {
   showSuggestions?: boolean;
 }
 
-
 /**
  * 对话消息组件：分为【用户提问】和【智能助手答复】
  * @param props
  */
-const Message = (props: IProps) => {
+const Message = memo((props: IProps) => {
   const { message, showSuggestions = false } = props;
   const { role, text, suggestions = [], files, images } = message;
   const store = useChatStore();
   const { sendMessage } = useConversation();
   const messagesRef = useRef<HTMLDivElement>(null);
- 
-    // 当消息列表更新时，滚动到底部
-    useEffect(() => {
-        const messagesContainer = messagesRef.current;
-        if (messagesContainer) {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-    }, [message]); 
- 
+
+  // 当消息列表更新时，滚动到底部
+  useEffect(() => {
+    const messagesContainer = messagesRef.current;
+    if (messagesContainer) {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  }, [message]);
+
   return (
     <div className={style("")}>
       {/* 头像 */}
@@ -48,9 +47,10 @@ const Message = (props: IProps) => {
       <div>
         <div
           className={`${style("content")} ${
-            role === "assistant" ? style("content-assistant") : style("content-user")
-            }`}
-          
+            role === "assistant"
+              ? style("content-assistant")
+              : style("content-user")
+          }`}
         >
           <Skeleton
             active
@@ -61,7 +61,14 @@ const Message = (props: IProps) => {
               <div className={style("content-imgs")}>
                 {images?.map((img) => (
                   <div className={style("content-imgs-img")}>
-                    <img src={img.base64} style={{height:"100%",width:"100%",objectFit:'cover'}}></img>
+                    <img
+                      src={img.base64}
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        objectFit: "cover",
+                      }}
+                    ></img>
                   </div>
                 ))}
               </div>
@@ -81,7 +88,11 @@ const Message = (props: IProps) => {
             )}
 
             <div className={style("content-text")}>
-              {role === "assistant" ? <Markdown>{text}</Markdown> : <div className={style("content-text-user")}>{text}</div>}
+              {role === "assistant" ? (
+                <Markdown>{text}</Markdown>
+              ) : (
+                <div className={style("content-text-user")}>{text}</div>
+              )}
             </div>
           </Skeleton>
         </div>
@@ -103,6 +114,6 @@ const Message = (props: IProps) => {
       </div>
     </div>
   );
-};
+});
 
 export default Message;

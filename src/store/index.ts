@@ -22,8 +22,8 @@ interface IChatState {
   setCurrentConversation(currentConversation: string): void;
   conversations: TConversation[];
   setConversations(conversations: TConversation[]): void;
-  switchConversation: boolean;
-  setSwitchConversation(switchConversation: boolean): void;
+  // switchConversation: boolean;
+  // setSwitchConversation(switchConversation: boolean): void;
   messages: IMessage[];
   setMessages(messages: IMessage[]): void;
   isLoading: boolean;
@@ -72,9 +72,9 @@ export const useChatStore = create<IChatState>((set) => ({
     set({ currentConversation }),
   conversations,
   setConversations: (conversations: TConversation[]) => set({ conversations }),
-  switchConversation: false,
-  setSwitchConversation: (switchConversation: boolean) =>
-    set({ switchConversation }),
+  // switchConversation: false,
+  // setSwitchConversation: (switchConversation: boolean) =>
+  //   set({ switchConversation }),
   messages: [], // messagesMock as IMessage[],
   setMessages: (messages: IMessage[]) => set({ messages }),
   isLoading: false,

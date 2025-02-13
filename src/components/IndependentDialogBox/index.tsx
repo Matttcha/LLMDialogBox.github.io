@@ -5,7 +5,16 @@ import OriginalChat from "../OriginalChat";
 import ChatRecordBox from "../ChatRecordBox";
 import ChatInput from "../ChatInput";
 import { useChatStore } from "../../store";
-import { Modal, Input, Switch, Button, Drawer, Radio, Space } from "antd";
+import {
+  Modal,
+  Input,
+  Switch,
+  Button,
+  Drawer,
+  Radio,
+  Space,
+  message,
+} from "antd";
 // import { getMessageList } from "../../request/api";
 import {
   DoubleLeftOutlined,
@@ -64,10 +73,14 @@ const IndependentDialogBox = (props: IProps) => {
 
   // 点击历史对话
   const onCLickHistoryChat = async (item) => {
+    if (store.isLoading) {
+      message.error("还有进行中的对话，请稍后再试");
+      return;
+    }
     // 如果 当前会话id 不等于 被点击的会话id，表示需要切换会话；否则表示点击的仍然是当前会话，此时不操作
     if (store.currentConversation !== item.conversationId) {
       store.setCurrentConversation(item.conversationId); // 将被点击的会话的id设为当前会话id
-      store.setSwitchConversation(true); // 表示切换会话
+      // store.setSwitchConversation(true); // 表示切换会话
       const messagesCache = store.switchConversationMessage.find(
         // 从【所有会话缓存】中取出【当前会话】对应的消息缓存
         (obj) => obj.conversationId === item.conversationId
@@ -102,6 +115,10 @@ const IndependentDialogBox = (props: IProps) => {
           <div
             className={style("left-add-conversation")}
             onClick={() => {
+              if (store.isLoading) {
+                message.error("还有进行中的对话，请稍后再试");
+                return;
+              }
               if (store.currentConversation) {
                 store.setCurrentConversation("");
                 store.setMessages([]);
