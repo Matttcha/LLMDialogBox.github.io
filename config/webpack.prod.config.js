@@ -12,6 +12,10 @@ const prodConfig = {
     libraryTarget: "umd", // 采用通用模块定义
     libraryExport: "default", // 兼容 ES6 Module、CommonJS 和 AMD 模块规范
   },
+  // output: {
+  //   path: path.join(__dirname, "../docs/"),
+  //   filename: "dev.js",
+  // },
   module: {
     rules: [
       {
