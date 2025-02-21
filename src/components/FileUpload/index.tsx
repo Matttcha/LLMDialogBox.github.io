@@ -149,8 +149,11 @@ export default forwardRef((props: IProps, ref) => {
         "上传完成"
       );
     } catch (err) {
+      console.log(1);
       store.setIsFileUploading(false);
     } finally {
+      console.log(2);
+      // store.setIsFileUploading(false);
     }
   };
 
