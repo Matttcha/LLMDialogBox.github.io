@@ -5,27 +5,35 @@
   height: 22px;
   // color: #676c90;
 }
-.erc-chat-input {
+.erc-inlineDialogBox {
   // position: absolute;
   // bottom: 10px;
-  width: 540px;
+  width: 500px;
   // height: 120px;
   border-radius: 10px;
   background-color: #fff;
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+  // box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   padding: 15px;
+  // display: flex;
+  // justify-content: center;
+  // align-content: center;
+
   &-textarea {
+    width: 500px;
     // height: 100px;
     &-files {
       display: flex;
       flex-wrap: wrap;
       margin-bottom: 5px;
+      margin-top: 5px;
+
       &-image {
         position: relative;
         height: 25px;
         width: 50px;
         margin-right: 10px;
+
         &-img {
           height: 25px;
           width: 50px;
@@ -71,12 +79,14 @@
           /* 隐藏溢出内容 */
           text-overflow: ellipsis;
         }
+
         &-status {
           font-size: 13.5px;
           white-space: nowrap;
           margin-right: 6px;
           color: dodgerblue;
         }
+
         &-delete {
           width: 12px;
           height: 12px;
@@ -89,32 +99,55 @@
         }
       }
     }
-  }
-  &-btns {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-top: 10px;
-    &-btn {
-      margin-right: 10px;
+
+    &-input {
       display: flex;
-      align-items: center;
-      justify-self: center;
-      font-size: 17px;
-      color: #676c90;
-      font-weight: bold;
-      &-send {
-        color: #fff;
-        font-size: 23;
-        stroke-width: 4;
-        width: 18px;
-        height: 18px;
+      width: 600px;
+      height: 50px;
+
+
+      &-btns {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: 10px;
+
+        &-btn {
+          margin-right: 10px;
+          display: flex;
+          align-items: center;
+          justify-self: center;
+
+          &-send {
+            color: #fff;
+            font-size: 23;
+            stroke-width: 4;
+            width: 18px;
+            height: 18px;
+          }
+        }
+
+        &-send {
+          background-color: rgb(73, 85, 245);
+          border-radius: 13px;
+          padding: 3px 12px;
+        }
       }
     }
-    &-send {
-      background-color: rgb(73, 85, 245);
-      border-radius: 13px;
-      padding: 3px 12px;
-    }
   }
+
+  // &-scroll-container{
+  //   height: 350px; /* 根据需要调整高度 */
+  // overflow-y: auto; /* 允许垂直滚动 */
+  // border: 1px solid #ccc; /* 可选，为了视觉效果 */
+  // padding: 10px; /* 可选，为了内边距 */
+&-messages {
+    width: 600px;
+    height: 350px;
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #bab9b9 #ffffff; /* 滑块颜色 轨道颜色 */
+  }
+  // }
+  
 }

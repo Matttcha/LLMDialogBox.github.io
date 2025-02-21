@@ -1,15 +1,27 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import "./index.less";
 import getStyleName from "../../utils/getStyleName";
-import { IconFile, IconFileImage, IconSend } from "@arco-design/web-react/icon";
-import { Tooltip, Input } from "antd";
+import { Tooltip, Input, Button, message } from "antd";
 import FileUpload from "../FileUpload";
 
 const { TextArea } = Input;
 
 import { useChatStore } from "../../store";
 import useConversation from "../../hooks/useConversation";
-import { LoadingOutlined, FileWordOutlined, FileTextOutlined, FileExcelOutlined, FilePdfOutlined, FilePptOutlined, CloseCircleOutlined, DeleteFilled} from '@ant-design/icons';
+import {
+  LoadingOutlined,
+  FileWordOutlined,
+  FileTextOutlined,
+  FileExcelOutlined,
+  FilePdfOutlined,
+  FilePptOutlined,
+  CloseCircleOutlined,
+  UploadOutlined,
+  FileAddOutlined,
+  FileImageOutlined,
+  DownloadOutlined,
+  SendOutlined,
+} from "@ant-design/icons";
 import { IInput, IImage, IFile } from "../../type";
 const style = getStyleName("chat-input");
 
@@ -17,6 +29,7 @@ interface IProps {}
 
 interface IFileUploadRef {
   click: () => {};
+  setPassedParam(param): () => {};
 }
 
 /**
@@ -30,6 +43,7 @@ const ChatInput = (props: IProps) => {
   const [fileList, setFileList] = useState<IFile[]>([]);
   const { sendMessage } = useConversation();
   const fileUploadRef = useRef<IFileUploadRef>(null);
+  const [accept, setAccept] = useState<string>("");
 
   // 当前对话切换时，清空文本框、图片列表、文件列表
   useEffect(() => {
@@ -39,80 +53,117 @@ const ChatInput = (props: IProps) => {
   }, [store.currentConversation]);
 
   const deleteFile = (id, type) => {
-
-    if (type === 'img') {
+    if (type === "img") {
       let images = [...imageList].filter((item) => {
-      return item.id!==id
-    })
-    setImageList(images)
+        return item.id !== id;
+      });
+      setImageList(images);
     } else {
       let files = [...fileList].filter((item) => {
-      return item.id!==id
-    })
-    setFileList(files)
+        return item.id !== id;
+      });
+      setFileList(files);
     }
-    
-  }
+  };
 
   // 上传文件成功
-  const onUploadSuccess = (file_name: string, id: string, base64?: string, uploadStatus?:string) => {
-      let updatedImageList = [...imageList];
-      let updatedFileList = [...fileList];
+  const onUploadSuccess = (
+    file_name: string,
+    id: string,
+    base64?: string,
+    uploadStatus?: string
+  ) => {
+    let updatedImageList = [...imageList];
+    let updatedFileList = [...fileList];
 
-    
-      if (base64) {
-        // 如果是图片类型
-        let newImageObject:IImage = { file_name, id, base64, status:uploadStatus};
-        updatedImageList.push(newImageObject);
-        setImageList(updatedImageList);
-        
-      } else {
-        // 如果是其他文件类型
-        let newFileObject:IFile = { file_name, id, status:uploadStatus}; 
-        updatedFileList.push(newFileObject);
-        setFileList(updatedFileList);
-  
-      }
+    if (base64) {
+      // 如果是图片类型
+      let newImageObject: IImage = {
+        file_name,
+        id,
+        base64,
+        status: uploadStatus,
+      };
+      updatedImageList.push(newImageObject);
+      setImageList(updatedImageList);
+    } else {
+      // 如果是其他文件类型
+      let newFileObject: IFile = { file_name, id, status: uploadStatus };
+      updatedFileList.push(newFileObject);
+      setFileList(updatedFileList);
+    }
+    store.setIsFileUploading(false);
   };
 
   const updateFileList = (type: string, file: IFile | IImage) => {
-    if (type === 'img') {
-      setImageList([...imageList as IImage[], file as IImage])
+    if (type === "img") {
+      setImageList([...(imageList as IImage[]), file as IImage]);
+    } else if (type === "file") {
+      setFileList([...(fileList as IFile[]), file as IFile]);
     }
-    if (type === 'file') {
-      setFileList([...fileList as IFile[], file as IFile])
+  };
+  const updateFileListFail = (type: string) => {
+    if (type === "img") {
+      setImageList([...(imageList as IImage[])]);
+    } else if (type === "file") {
+      setFileList([...(fileList as IFile[])]);
     }
-  }
-
+    store.setIsFileUploading(false);
+  };
 
   return (
     <>
       <div className={style("")}>
         <div className={style("textarea")}>
           <div className={style("textarea-files")}>
-
             {imageList.map((img) => (
-              <div  className={style("textarea-files-image")} key={img.id}>
-                <div className={style("textarea-files-image-img")} >
-                  {img.base64==='base64'?<LoadingOutlined />:<img src={img.base64} />}
+              <div className={style("textarea-files-image")} key={img.id}>
+                <div className={style("textarea-files-image-img")}>
+                  {img.base64 === "base64" ? (
+                    <LoadingOutlined />
+                  ) : (
+                    <img src={img.base64} />
+                  )}
                 </div>
-                <CloseCircleOutlined className={style("textarea-files-image-delete")} onClick={() => {
-                  deleteFile(img.id, 'img')
-                  }}/>
+                <CloseCircleOutlined
+                  className={style("textarea-files-image-delete")}
+                  onClick={() => {
+                    deleteFile(img.id, "img");
+                  }}
+                />
               </div>
             ))}
-            
+
             {fileList.map((file) => (
               <div className={style("textarea-files-file")} key={file.id}>
-
-                {file.status==='上传中'?<LoadingOutlined />:file.file_name.split('.').slice(-1)[0] === 'ppt'||'pptx' ? <FilePptOutlined /> : file.file_name.split('.').slice(-1)[0] === 'pdf' ? <FilePdfOutlined /> :file.file_name.split('.').slice(-1)[0] === 'xls'||'xlsx' ? <FileExcelOutlined /> :file.file_name.split('.').slice(-1)[0] === 'doc'||'docx' ? <FileWordOutlined /> :<FileTextOutlined />}
-                <div className={style("textarea-files-file-name")}>{file.file_name}</div>
-                <div className={style("textarea-files-file-status")}>{ file.status}</div>
-                <CloseCircleOutlined className={style("textarea-files-file-delete")} onClick={() => {
-                  deleteFile(file.id, 'file')
-                }} />
-                
-
+                {file.status === "上传中" ? (
+                  <LoadingOutlined />
+                ) : file.file_name.split(".").slice(-1)[0] === "ppt" ||
+                  "pptx" ? (
+                  <FilePptOutlined />
+                ) : file.file_name.split(".").slice(-1)[0] === "pdf" ? (
+                  <FilePdfOutlined />
+                ) : file.file_name.split(".").slice(-1)[0] === "xls" ||
+                  "xlsx" ? (
+                  <FileExcelOutlined />
+                ) : file.file_name.split(".").slice(-1)[0] === "doc" ||
+                  "docx" ? (
+                  <FileWordOutlined />
+                ) : (
+                  <FileTextOutlined />
+                )}
+                <div className={style("textarea-files-file-name")}>
+                  {file.file_name}
+                </div>
+                <div className={style("textarea-files-file-status")}>
+                  {file.status}
+                </div>
+                <CloseCircleOutlined
+                  className={style("textarea-files-file-delete")}
+                  onClick={() => {
+                    deleteFile(file.id, "file");
+                  }}
+                />
               </div>
             ))}
           </div>
@@ -128,52 +179,67 @@ const ChatInput = (props: IProps) => {
         <div className={style("btns")}>
           <div
             className={style("btns-btn")}
-            onClick={() => {
+            onClick={async () => {
+              await setAccept(".doc,.docs,.pdf");
               fileUploadRef.current?.click();
             }}
           >
             <Tooltip title="上传文件 单个最大512MB 支持doc、docs、pdf等">
-              <IconFile />
+              <FileAddOutlined />
             </Tooltip>
           </div>
           <div
             className={style("btns-btn")}
-            onClick={() => {
+            onClick={async () => {
+              await setAccept(".png,.jpg");
               fileUploadRef.current?.click();
             }}
           >
             <Tooltip title="上传图片">
-              <IconFileImage />
+              <FileImageOutlined />
             </Tooltip>
           </div>
-          <div
-            className={`${style("btns-btn")} ${style("btns-send")}`}
+          <Button
+            style={{ background: "#4955f5" }}
+            type="primary"
+            shape="round"
+            icon={<SendOutlined />}
+            loading={store.isLoading}
+            disabled={store.isFileUploading}
             onClick={async () => {
-              const fileStatusList = fileList.map(item => item.status)
-              const imageStatusList = imageList.map(item=> item.status)
-              if ([...fileStatusList, ...imageStatusList].includes('上传中')) {
-
+              if (store.isLoading) {
+                return;
+              }
+              if (input.replace(/\s+/g, "") === "") {
+                return;
+              }
+              const fileStatusList = fileList.map((item) => item.status);
+              const imageStatusList = imageList.map((item) => item.status);
+              if ([...fileStatusList, ...imageStatusList].includes("上传中")) {
                 return;
               }
               const messageInput: IInput = {
-                text: input, 
+                text: input,
                 fileList: fileList,
-                imageList: imageList
+                imageList: imageList,
               };
-              setFileList([])
-              setImageList([])
-              setInput('')
+              setFileList([]);
+              setImageList([]);
+              setInput("");
               await sendMessage(messageInput);
-              
             }}
-          >
-            <IconSend className={style("btns-btn-send")} />
-          </div>
+          />
         </div>
       </div>
-      <FileUpload ref={fileUploadRef} onUploadSuccess={onUploadSuccess} updateFileList={updateFileList} />
+      <FileUpload
+        accept={accept}
+        ref={fileUploadRef}
+        onUploadSuccess={onUploadSuccess}
+        updateFileList={updateFileList}
+        updateFileListFail={updateFileListFail}
+      />
     </>
   );
 };
 
-export default ChatInput;
+export default memo(ChatInput);

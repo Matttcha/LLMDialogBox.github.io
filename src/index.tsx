@@ -34,15 +34,14 @@ const LLMDialogBox = (props: IProps) => {
   useEffect(() => {
     const fetchBotInfo = async () => {
       try {
-        // const data = await getBotInfo(); // 暂时不用，先用mock数据，因为调用会超api调用限额
-        const data = await botInfo;
+        const data = await getBotInfo(); // 暂时不用，先用mock数据，因为调用会超api调用限额
         store.setBotInfo(data);
       } catch (e) {
         console.log(e);
       }
     };
     fetchBotInfo();
-  }, [store.userConfig]); // botId后续要改，这里只是暂时写一下
+  }, [store.userConfig]);
 
   return (
     <>

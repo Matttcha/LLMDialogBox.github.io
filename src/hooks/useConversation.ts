@@ -18,6 +18,10 @@ function useConversation() {
   const store = useChatStore();
 
   const sendMessage = async (input: IInput) => {
+    if (store.isLoading) {
+      message.error("还有进行中的对话，请稍后再试");
+      return;
+    }
     // 在接口数据返回前插入两条正在处理中的问答
     const newMessages = [
       ...store.messages,
@@ -34,7 +38,7 @@ function useConversation() {
     ] as IMessage[];
     store.setMessages(newMessages);
     // 发送消息不需要重新请求历史消息列表，否则历史消息列表会覆盖messages
-    store.switchConversation && store.setSwitchConversation(false);
+    // store.switchConversation && store.setSwitchConversation(false);
     store.setIsLoading(true);
     await handleSend(input, newMessages);
 
@@ -78,26 +82,17 @@ function useConversation() {
     // 如果是新对话,把会话id和第一个问题文本一起存入store.conversations，同时更新store.currentConversation
     // 分情况写逻辑，如果是流式响应，直接处理结果；如果是非流式，用获取到的会话id和对话id作为查询参数，轮询“查看对话详情”接口，得到完成的结果后再调用“查看对话消息详情”接口，获取消息详情
     try {
-      const { contentArr, content_type } = buildContentArr(input);
+      const { contentArr, content_type } = buildContentArr(input); // 将输入信息转换成接口所需的格式
       const res = await getChat(
         JSON.stringify(contentArr),
         content_type,
         conversationId
       );
-      const { code, msg } = await res.json();
-      if (code !== 0) {
-        if (code === 4100) {
-          message.error("请设置正确的 COZE TOKEN 和 BOT ID");
-        } else {
-          message.error(msg);
-        }
-        return;
-      }
 
       const contentType = res.headers.get("Content-Type");
       if (contentType?.includes("text/event-stream")) {
         // 流式
-        let result = { ...newMessages.pop(), suggestions: [] };
+        let result = { ...newMessages.slice(-1)[0], suggestions: [] };
         await handleSSEResponse(
           res,
           newMessages,
@@ -106,16 +101,49 @@ function useConversation() {
           input.text
         );
       } else {
-        // 非流式
+        // 非流式（注意：如果流式响应接口报错，此时也会走这个逻辑！）
         const resJson = await res.json();
+        // // 错误处理
+        const { code, msg } = resJson;
+        if (code !== 0) {
+          message.error(msg);
+          if (!conversationId) {
+            // 如果是开启一个新对话，此时清除刚才在messages中新增的消息
+            store.setMessages([]);
+          } else {
+            // 如果是接着之前的对话继续发消息，则把智能体的回答改成报错信息
+            newMessages[newMessages.length - 1].text = msg;
+            store.setMessages(newMessages);
+            // 更新缓存
+            const foundObject = store.switchConversationMessage.find(
+              (obj) => obj.conversationId === store.currentConversation
+            );
+            const newArr = store.switchConversationMessage.filter(
+              (item) => item.conversationId !== foundObject?.conversationId
+            );
+
+            const updatedMessages = [
+              ...newArr, // 使用已经过滤后的新数组
+              {
+                conversationId: store.currentConversation,
+                message: newMessages,
+              },
+            ];
+
+            store.setSwitchConversationMessage(updatedMessages);
+          }
+
+          store.setIsLoading(false);
+          return;
+        }
         const {
-          code,
           data: { id: chat_id, conversation_id },
-          msg,
         } = resJson;
 
         if (!conversationId) {
-          //没有conversationId
+          // 如果为空，表示此时是开启一个新对话
+          // 1.用从接口获取到的 conversation_id 和 用户的第一条消息文本更新conversations，从而更新左侧历史会话列表
+          // 2.将此时从接口获取到的 conversation_id 赋给 currentConversation
           store.setConversations([
             { conversationId: conversation_id, text: input.text },
             ...store.conversations,
@@ -124,7 +152,7 @@ function useConversation() {
         }
 
         // 用 chat_id 和 conversation_id 进行轮询，轮询结束后获得对话消息详情
-        const data = await asyncChatRetrieve(chat_id, conversation_id); // 暂时注视
+        const data = await asyncChatRetrieve(chat_id, conversation_id);
         // const data = await assistantReply; // mock
         const answer = data.find((item) => item.type === "answer")?.content;
         const follow_up = data
@@ -138,8 +166,50 @@ function useConversation() {
             suggestions: follow_up,
           },
         ]);
+
+        // 更新缓存
+        const foundObject = store.switchConversationMessage.find(
+          (obj) => obj.conversationId === conversation_id
+        );
+        if (!foundObject) {
+          store.setSwitchConversationMessage([
+            ...store.switchConversationMessage,
+            {
+              conversationId: conversation_id,
+              message: [
+                ...newMessages.slice(0, -1),
+                {
+                  role: "assistant",
+                  text: answer,
+                  suggestions: follow_up,
+                },
+              ],
+            },
+          ]);
+        } else {
+          const newArr = store.switchConversationMessage.filter(
+            (item) => item.conversationId !== foundObject.conversationId
+          );
+
+          const updatedMessages = [
+            ...newArr, // 使用已经过滤后的新数组
+            {
+              conversationId: conversation_id,
+              message: [
+                ...newMessages.slice(0, -1),
+                {
+                  role: "assistant",
+                  text: answer,
+                  suggestions: follow_up,
+                },
+              ],
+            },
+          ];
+
+          store.setSwitchConversationMessage(updatedMessages);
+        }
       }
-    } catch {
+    } catch (e) {
     } finally {
       store.setIsLoading(false);
     }
@@ -189,15 +259,73 @@ function useConversation() {
   ) => {
     await parseSSEResponse(res, (message) => {
       if (message.includes("[DONE]")) {
-        console.log("result", result);
         store.setMessages([
-          ..._messages,
+          ..._messages.slice(0, -1),
           {
             role: "assistant",
             text: result.text,
             suggestions: result.suggestions,
           },
         ]);
+        const foundObject = store.switchConversationMessage.find(
+          (obj) => obj.conversationId === result.conversation_id
+        );
+        if (!foundObject) {
+          store.setSwitchConversationMessage([
+            ...store.switchConversationMessage,
+            {
+              conversationId: result.conversation_id,
+              message: [
+                ..._messages.slice(0, -1),
+                {
+                  role: "assistant",
+                  text: result.text,
+                  suggestions: result.suggestions,
+                },
+              ],
+            },
+          ]);
+        } else {
+          const newArr = store.switchConversationMessage.filter(
+            (item) => item.conversationId !== foundObject.conversationId
+          );
+
+          const updatedMessages = [
+            ...newArr, // 使用已经过滤后的新数组
+            {
+              conversationId: result.conversation_id,
+              message: [
+                ..._messages.slice(0, -1),
+                {
+                  role: "assistant",
+                  text: result.text,
+                  suggestions: result.suggestions,
+                },
+              ],
+            },
+          ];
+
+          store.setSwitchConversationMessage(updatedMessages);
+          // let newArr = store.switchConversationMessage.filter(function (item) {
+          //   return item !== foundObject;
+          // });
+          // // store.setSwitchConversationMessage(newArr) //
+          // store.setSwitchConversationMessage([
+          //   ...store.switchConversationMessage,
+          //   {
+          //     conversationId: result.conversation_id,
+          //     message: [
+          //       ..._messages,
+          //       {
+          //         role: "assistant",
+          //         text: result.text,
+          //         suggestions: result.suggestions, //
+          //       },
+          //     ],
+          //   },
+          // ]);
+        }
+
         return;
       }
       let data;
@@ -208,16 +336,6 @@ function useConversation() {
       }
 
       if (!conversationId) {
-        // const { chat_id } = data;
-        // if (chat_id && chat_id !== store.currentConversation) {
-        //   store.setConversations([
-        //     { conversationId: chat_id, text },
-        //     ...store.conversations,
-        //   ]);
-        //   store.setCurrentConversation(chat_id); // 设置新获取到的chat_id
-        // }
-
-        // conversation_id
         const { conversation_id } = data;
         if (conversation_id && conversation_id !== store.currentConversation) {
           store.setConversations([
@@ -225,17 +343,20 @@ function useConversation() {
             ...store.conversations,
           ]);
           store.setCurrentConversation(conversation_id); // 设置新获取到的chat_id
+          result.conversation_id = conversation_id;
         }
+      } else {
+        const { conversation_id } = data;
+        result.conversation_id = conversation_id;
       }
 
       if (["answer"].includes(data?.type) && !data.created_at) {
         result.text += data?.content;
         store.setMessages([
-          ..._messages,
+          ..._messages.slice(0, -1),
           { role: "assistant", text: result.text },
-        ]); ///
+        ]);
       } else if (data?.type === "follow_up") {
-        console.log(data.content);
         result.suggestions?.push(data.content);
       } else if (data?.status == "failed") {
         throw new Error(data.last_error!.msg);
@@ -251,7 +372,6 @@ function useConversation() {
       }
       const statusText =
         resp.statusText || statusTextMap.get(resp.status) || "";
-      console.log(`${resp.status} ${statusText}`);
     }
 
     // 创建一个SSE事件解析器。参数：通常包括一个回调函数，用于处理解析到的事件
@@ -259,7 +379,6 @@ function useConversation() {
       // 使用自定义解析器（通过 createParser 创建）解析SSE事件和数据
       onEvent: (event) => {
         if (event.data) {
-          // console.log("Event data:", event.data);
           onMessage(event.data);
         }
       },

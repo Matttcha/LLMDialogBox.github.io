@@ -95,6 +95,10 @@ export interface FileInfoInter {
  * 对话类型
  *
  */
+export interface ISwitchConversationMessage {
+  conversationId: string;
+  message: IMessage[];
+}
 export interface IMessage {
   role: role;
   text: string;

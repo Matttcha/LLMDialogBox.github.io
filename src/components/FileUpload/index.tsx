@@ -8,7 +8,32 @@ import React, {
 import { message } from "antd";
 import { file as fileUpload } from "../../mock";
 import { IFile, IImage } from "../../type";
+import { uploadFile } from "../../request/api";
+import { useChatStore } from "../../store";
 
+const fileType = [
+  "doc",
+  "docx",
+  "xls",
+  "xlsx",
+  "ppt",
+  "pptx",
+  "pdf",
+  "numbers",
+  "csv",
+  "jpg",
+  "jpg2",
+  "png",
+  "gif",
+  "webp",
+  "heic",
+  "heif",
+  "bmp",
+  "pcd",
+  "tiff",
+];
+
+const imageType = ["jpg", "jpg2", "png", "gif"];
 interface IProps {
   onUploadSuccess: (
     file_name: string,
@@ -17,10 +42,13 @@ interface IProps {
     uploadStatus?: string
   ) => void;
   updateFileList: (type: string, file: IFile | IImage) => void;
+  updateFileListFail: (type: string) => void;
+  accept: string;
 }
 
 export default forwardRef((props: IProps, ref) => {
-  const { onUploadSuccess, updateFileList } = props;
+  const store = useChatStore();
+  const { onUploadSuccess, updateFileList, updateFileListFail, accept } = props;
   const fileInputRef = useRef<any>("");
   const [fileName, setFileName] = useState<string>("");
 
@@ -55,38 +83,18 @@ export default forwardRef((props: IProps, ref) => {
   };
 
   const handleFileChange = async (e) => {
-    if (e.target.files[0].size > 536870912) {
+    const file = e.target.files[0];
+    // 检验文件大小与类型，文件大小要小于512MB
+    if (file.size > 536870912) {
       return;
-    } //文件大小要小于512MB
+    }
 
-    const fileType = [
-      "doc",
-      "docx",
-      "xls",
-      "xlsx",
-      "ppt",
-      "pptx",
-      "pdf",
-      "numbers",
-      "csv",
-      "jpg",
-      "jpg2",
-      "png",
-      "gif",
-      "webp",
-      "heic",
-      "heif",
-      "bmp",
-      "pcd",
-      "tiff",
-    ];
-    if (fileType.includes(e.target.files[0].name.split(".").slice(-1)[0])) {
-    } else {
+    if (!fileType.includes(file.name.split(".").slice(-1)[0])) {
       message.info("上传失败");
       return;
     }
-    const file = e.target.files[0];
-    const imageType = ["jpg", "jpg2", "png", "gif"];
+
+    // 如果是图片
     if (imageType.includes(file.name.split(".").slice(-1)[0])) {
       setFileName(file.name);
       const newFile: IImage = {
@@ -97,6 +105,7 @@ export default forwardRef((props: IProps, ref) => {
       };
       updateFileList("img", newFile);
     } else {
+      // 如果是文件
       setFileName(file.name);
       const newFile = {
         file_name: file.name,
@@ -107,48 +116,41 @@ export default forwardRef((props: IProps, ref) => {
     }
 
     try {
-      setTimeout(async () => {
-        const file = e.target.files[0];
-        // console.log("file", file);
+      store.setIsFileUploading(true); // 把文件上传状态设置为上传中
+      const form_data = new FormData();
+      form_data.append("file", file);
+      const jsonData = await uploadFile(form_data);
+      // const jsonData = await fileUpload; // mock
+      const code = jsonData.code;
+      const msg = jsonData.msg;
+      if (code !== 0) {
+        message.error(msg);
+        //去除filelist imagelist最后一项
+        imageType.includes(file.name.split(".").slice(-1)[0])
+          ? updateFileListFail("img")
+          : updateFileListFail("file");
+        return;
+      }
 
-        const form_data = new FormData();
-        form_data.append("file", file);
-
-        // ````````
-        const res = await fetch("https://api.coze.cn/v1/files/upload", {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + "",
-          },
-          body: form_data,
-        });
-        const jsonData = await res.json();
-
-        // ````````
-
-        // const jsonData = await fileUpload;
-
-        let fileExtension;
-        if (typeof file.name === "string") {
-          fileExtension = file.name.split(".").slice(-1)[0];
-        }
-        let base64;
-        if (
-          ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(fileExtension)
-        ) {
-          base64 = await handleFileToBase64(file);
-        }
-
-        onUploadSuccess(
-          jsonData.data.file_name,
-          jsonData.data.id,
-          base64,
-          "上传完成"
-        );
-        return jsonData;
-      }, 3000);
+      let fileExtension;
+      if (typeof file.name === "string") {
+        fileExtension = file.name.split(".").slice(-1)[0];
+      }
+      let base64;
+      if (
+        ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(fileExtension)
+      ) {
+        base64 = await handleFileToBase64(file);
+      }
+      onUploadSuccess(
+        jsonData.data.file_name,
+        jsonData.data.id,
+        base64,
+        "上传完成"
+      );
     } catch (err) {
-      console.error(err);
+      store.setIsFileUploading(false);
+    } finally {
     }
   };
 
@@ -158,6 +160,8 @@ export default forwardRef((props: IProps, ref) => {
       ref={fileInputRef}
       style={{ display: "none" }}
       onChange={handleFileChange}
+      accept={accept}
+      // id="fileInput"
     ></input>
   );
 });

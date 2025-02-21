@@ -2,7 +2,6 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import LLMDialogBox from "../src/index"; // 引入组件
 import "./index.less";
-// import LLMDialogBox from 'evil-ragdoll-cat';
 
 const App = () => {
   return (

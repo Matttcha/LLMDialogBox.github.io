@@ -193,6 +193,70 @@ export const file = {
   msg: "",
 };
 
+export const assistantReply3 = [
+  {
+    bot_id: "7460125530122190900",
+    chat_id: "7460952801024262182",
+    content:
+      "这是一张布偶猫的照片：[布偶猫](https://pic4.zhimg.com/v2-09d3d97f89a8edca86e9902276a3a409_r.jpg?source=1940ef5c) ，希望您喜欢。",
+    content_type: "text",
+    conversation_id: "7460952801024229414",
+    created_at: 1737138449,
+    id: "7460952801024278566",
+    role: "assistant",
+    type: "answer",
+    updated_at: 1737138449,
+  },
+  {
+    bot_id: "7460125530122190900",
+    chat_id: "7460952801024262182",
+    content:
+      '{"msg_type":"generate_answer_finish","data":"{\\"finish_reason\\":0,\\"FinData\\":\\"\\"}","from_module":null,"from_unit":null}',
+    content_type: "text",
+    conversation_id: "7460952801024229414",
+    created_at: 1737138451,
+    id: "7460952822880927795",
+    role: "assistant",
+    type: "verbose",
+    updated_at: 1737138451,
+  },
+  {
+    bot_id: "7460125530122190900",
+    chat_id: "7460952801024262182",
+    content: "再生成一张布偶猫的照片",
+    content_type: "text",
+    conversation_id: "7460952801024229414",
+    created_at: 1737138452,
+    id: "7460952822880944179",
+    role: "assistant",
+    type: "follow_up",
+    updated_at: 1737138451,
+  },
+  {
+    bot_id: "7460125530122190900",
+    chat_id: "7460952801024262182",
+    content: "布偶猫照片生成的风格有哪些？",
+    content_type: "text",
+    conversation_id: "7460952801024229414",
+    created_at: 1737138452,
+    id: "7460952822880976947",
+    role: "assistant",
+    type: "follow_up",
+    updated_at: 1737138451,
+  },
+  {
+    bot_id: "7460125530122190900",
+    chat_id: "7460952801024262182",
+    content: "布偶猫照片拍摄时的光线和构图技巧有哪些？",
+    content_type: "text",
+    conversation_id: "7460952801024229414",
+    created_at: 1737138452,
+    id: "7460952833735524362",
+    role: "assistant",
+    type: "follow_up",
+    updated_at: 1737138451,
+  },
+];
 // export const conversations = {
 //   abc: [
 //     {

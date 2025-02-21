@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import "./index.less";
 import getStyleName from "../../utils/getStyleName";
 import { useChatStore } from "../../store";
@@ -38,7 +38,8 @@ interface IProps {}
  * 初始状态对话框
  * @param props
  */
-const OriginalChat = (props: IProps) => {
+const OriginalChat = memo((props: IProps) => {
+  console.log('OriginalChat')
   const store = useChatStore();
   const { sendMessage } = useConversation();
 
@@ -70,6 +71,8 @@ const OriginalChat = (props: IProps) => {
       </div>
     </div>
   );
-};
+});
 
 export default OriginalChat;
+
+
