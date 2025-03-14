@@ -63,6 +63,10 @@ function CustomCode(props: { children: ReactNode; className?: string }) {
   );
 }
 
+/**
+ * Markdown格式展示组件
+ * @param props
+ */
 const Markdown: FC<{ children: string }> = ({ children }) => {
   return (
     <ReactMarkdown

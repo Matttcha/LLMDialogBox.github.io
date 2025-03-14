@@ -46,6 +46,10 @@ interface IProps {
   accept: string;
 }
 
+/**
+ * 文件上传组件
+ * @param props
+ */
 export default forwardRef((props: IProps, ref) => {
   const store = useChatStore();
   const { onUploadSuccess, updateFileList, updateFileListFail, accept } = props;

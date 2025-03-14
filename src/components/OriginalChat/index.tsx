@@ -35,11 +35,11 @@ const data = [
 interface IProps {}
 
 /**
- * 初始状态对话框
+ * 首页初始状态对话框
  * @param props
  */
 const OriginalChat = memo((props: IProps) => {
-  console.log('OriginalChat')
+  console.log("OriginalChat");
   const store = useChatStore();
   const { sendMessage } = useConversation();
 
@@ -74,5 +74,3 @@ const OriginalChat = memo((props: IProps) => {
 });
 
 export default OriginalChat;
-
-

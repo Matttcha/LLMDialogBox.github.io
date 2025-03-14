@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useChatStore } from "../store";
 import { asyncChatRetrieve, getChat } from "../request/api";
 import { IContent, IInput, IMessage } from "../type";
@@ -6,6 +6,8 @@ import { assistantReply2 } from "../mock";
 import { isEmpty } from "lodash-es";
 import { createParser } from "eventsource-parser";
 import { message } from "antd";
+import DialogPerfMonitor from "../monitor";
+import { generateConversationId } from "../utils";
 
 const statusTextMap = new Map([
   [400, "Bad Request"],
@@ -14,7 +16,11 @@ const statusTextMap = new Map([
   [429, "Too Many Requests"],
 ]);
 
+/**
+ * useConversation：处理【收/发消息】逻辑，接收流式/非流式 响应
+ */
 function useConversation() {
+  const monitor = useRef(new DialogPerfMonitor());
   const store = useChatStore();
 
   const sendMessage = async (input: IInput) => {
@@ -74,6 +80,7 @@ function useConversation() {
   /**
    * handleSend 发送消息
    * @param input
+   * @param newMessages
    */
   const handleSend = async (input: IInput, newMessages) => {
     // 获取当前会话id
@@ -81,6 +88,9 @@ function useConversation() {
     // 发送【发起对话】接口，获取conversation_id和chat_id
     // 如果是新对话,把会话id和第一个问题文本一起存入store.conversations，同时更新store.currentConversation
     // 分情况写逻辑，如果是流式响应，直接处理结果；如果是非流式，用获取到的会话id和对话id作为查询参数，轮询“查看对话详情”接口，得到完成的结果后再调用“查看对话消息详情”接口，获取消息详情
+
+    const conversationPerId = generateConversationId();
+    monitor.current.startConversation(conversationPerId); // 监控标记：对话开始
     try {
       const { contentArr, content_type } = buildContentArr(input); // 将输入信息转换成接口所需的格式
       const res = await getChat(
@@ -93,12 +103,14 @@ function useConversation() {
       if (contentType?.includes("text/event-stream")) {
         // 流式
         let result = { ...newMessages.slice(-1)[0], suggestions: [] };
+        monitor.current.recordStreamingStart(conversationPerId); // 监控标记：流式响应开始
         await handleSSEResponse(
           res,
           newMessages,
           result,
           conversationId,
-          input.text
+          input.text,
+          conversationPerId
         );
       } else {
         // 非流式（注意：如果流式响应接口报错，此时也会走这个逻辑！）
@@ -211,6 +223,7 @@ function useConversation() {
       }
     } catch (e) {
     } finally {
+      monitor.current.endConversation(conversationPerId); // 监控标记：对话结束
       store.setIsLoading(false);
     }
   };
@@ -255,7 +268,8 @@ function useConversation() {
     _messages,
     result,
     conversationId,
-    text
+    text,
+    conversationPerId
   ) => {
     await parseSSEResponse(res, (message) => {
       if (message.includes("[DONE]")) {
@@ -334,6 +348,11 @@ function useConversation() {
       } catch (err) {
         throw new Error("Parsing failed");
       }
+
+      monitor.current.recordChunkArrival(
+        conversationPerId,
+        data.type === "answer" ? "text" : "suggestion"
+      );
 
       if (!conversationId) {
         const { conversation_id } = data;
