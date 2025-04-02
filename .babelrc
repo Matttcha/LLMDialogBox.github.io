@@ -1,10 +1,13 @@
-// 使用babel把代码编译成es5版本
+// 使用babel把 es6 代码编译成 es5 版本
+
+// .babelrc 文件是 ​Babel 的配置文件，用于指定 JavaScript/TypeScript 代码的转译规则。
+// 它的核心作用是告诉 Babel 如何将现代 JavaScript（或 React/TypeScript）代码转换为向后兼容的版本，以确保代码能在旧版浏览器（ie8-）或 Node.js 环境中运行。
 
 {
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react",
-      "@babel/preset-typescript"
-    ]
-  }
-  
+  "presets": [
+    // presets属性表示 Babel 预设（即，一组插件的集合），用于批量启用特定功能的转译规则。
+    "@babel/preset-env", // 根据目标环境自动确定需要转译的 ES6+ 语法（如箭头函数、async/await、class 等）
+    "@babel/preset-react", // 转译 React 特有的语法（如 JSX、React.createElement），例如 JSX → React.createElement() 函数的调用。
+    "@babel/preset-typescript" // 移除 TypeScript 类型注解，保留纯 JavaScript 代码（不进行类型检查）
+  ]
+}

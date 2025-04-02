@@ -5,11 +5,11 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // 用于将组
 
 const prodConfig = {
   mode: "production", // 生产模式
-  entry: path.join(__dirname, "../src/index.tsx"),
+  entry: path.join(__dirname, "../src/index.tsx"), // 为什么和开发模式不一样？
   output: {
     path: path.join(__dirname, "../lib/"),
     filename: "index.js",
-    libraryTarget: "umd", // 采用通用模块定义
+    libraryTarget: "umd", // 采用通用模块定义，让别人在使用我们的组件时可以以多种方式引入，<script src=".....">  npm install 包名
     libraryExport: "default", // 兼容 ES6 Module、CommonJS 和 AMD 模块规范
   },
   // entry: path.join(__dirname, "../docs/index.tsx"), // 入口，处理资源文件的依赖关系
@@ -18,6 +18,7 @@ const prodConfig = {
   //   filename: "dev.js",
   // },
   module: {
+    // loader ：转换器
     rules: [
       {
         test: /.s[ac]ss$/,
@@ -61,11 +62,13 @@ const prodConfig = {
     ],
   },
   plugins: [
+    // 插件 plugin ：让webpack具备更多的功能
     new MiniCssExtractPlugin({
       filename: "index.min.css", // 提取后的css的文件名
     }),
   ],
   externals: {
+    // 。。。。。。。
     // 定义外部依赖，避免把react和react-dom打包进去
     react: {
       root: "React",
